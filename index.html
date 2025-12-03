@@ -51,12 +51,19 @@
     .btn-pre { background: #e3f2fd; color: #1565c0; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
     .btn-pre:hover { background: #bbdefb; }
 
+    /* Estilos del panel de guardado actualizados */
     .storage-panel { background: #fff8e1; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ffe0b2; }
-    .storage-row { display: flex; gap: 5px; margin-top: 5px; }
-    .btn-action { flex: 1; padding: 8px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
-    .btn-save { background: #4caf50; } .btn-save:hover { background: #388e3c; }
-    .btn-load { background: #ff9800; } .btn-load:hover { background: #f57c00; }
-    .btn-del { background: #f44336; } .btn-del:hover { background: #d32f2f; }
+    .storage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
+    .storage-full { grid-column: span 2; }
+
+    .btn-action { width: 100%; padding: 8px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 0.75rem; transition: opacity 0.2s; }
+    .btn-action:hover { opacity: 0.85; }
+
+    .btn-save-here { background: #2e7d32; } /* Verde oscuro */
+    .btn-save-as { background: #4caf50; } /* Verde claro */
+    .btn-rename { background: #1976d2; } /* Azul */
+    .btn-load { background: #ff9800; } /* Naranja */
+    .btn-del { background: #d32f2f; } /* Rojo */
 
     .btn-print { 
         width: 100%; padding: 15px; border: none; border-radius: 6px; 
@@ -194,12 +201,17 @@
         
         <div class="form-col">
             <div class="storage-panel">
-                <label>Etiquetas Guardadas</label>
+                <label>Gestión de Etiquetas</label>
                 <select id="storage-select"></select>
-                <div class="storage-row">
-                    <button class="btn-action btn-save" onclick="saveLabel()">Guardar</button>
-                    <button class="btn-action btn-load" onclick="loadLabel()">Cargar</button>
-                    <button class="btn-action btn-del" onclick="deleteLabel()">Borrar</button>
+                
+                <div class="storage-grid">
+                    <button class="btn-action btn-load" onclick="loadLabel()" title="Carga la información de la etiqueta seleccionada en el menú desplegable.">Cargar</button>
+                    <button class="btn-action btn-save-here" onclick="saveLabelOverwrite()" title="Sobrescribe la etiqueta seleccionada actualmente con los datos del formulario.">Guardar aquí</button>
+                    
+                    <button class="btn-action btn-save-as" onclick="saveLabelNew()" title="Crea una nueva etiqueta con un nombre nuevo, sin borrar la anterior.">Guardar como...</button>
+                    <button class="btn-action btn-rename" onclick="renameLabel()" title="Cambia el nombre de la etiqueta seleccionada en el menú sin perder sus datos.">Renombrar</button>
+                    
+                    <button class="btn-action btn-del storage-full" onclick="deleteLabel()" title="Elimina permanentemente la etiqueta seleccionada.">Borrar Etiqueta</button>
                 </div>
             </div>
 
@@ -253,7 +265,7 @@
 
             <div class="group">
                 <label>Concentración (Opcional)</label>
-                <input type="text" id="inp-conc" placeholder="Ej. 98% (o dejar vacío)" oninput="upd()">
+                <input type="text" id="inp-conc" placeholder="Ej. 0,5 mol/L (o dejar vacío)" oninput="upd()">
             </div>
 
             <div class="group">
@@ -772,10 +784,8 @@ function upd() {
     }, 10);
 }
 
-function saveLabel(){
-    const name = prompt("Nombre para guardar la etiqueta:");
-    if(!name) return;
-    const obj = {
+function getFormData() {
+    return {
         n: document.getElementById('inp-name').value,
         conc: document.getElementById('inp-conc').value,
         c: document.getElementById('inp-cas').value,
@@ -786,11 +796,59 @@ function saveLabel(){
         pics: Array.from(activePics),
         dim: { w: document.getElementById('inp-width').value, h: document.getElementById('inp-height').value }
     };
+}
+
+// "Guardar Como" (Crear nueva)
+function saveLabelNew(){
+    const name = prompt("Nombre para la NUEVA etiqueta:");
+    if(!name) return;
     const saved = JSON.parse(localStorage.getItem('sga_labels') || '{}');
-    saved[name] = obj;
+    if(saved[name] && !confirm("Ya existe '" + name + "'. ¿Sobrescribir?")) return;
+
+    saved[name] = getFormData();
     localStorage.setItem('sga_labels', JSON.stringify(saved));
     updateStorageSelect();
-    alert("Guardado");
+    document.getElementById('storage-select').value = name;
+    alert("Guardada como: " + name);
+}
+
+// "Guardar Aquí" (Sobrescribir actual)
+function saveLabelOverwrite(){
+    const name = document.getElementById('storage-select').value;
+    if(!name) {
+        alert("Seleccione una etiqueta para sobrescribir o use 'Guardar Como'.");
+        return;
+    }
+    if(!confirm("¿Sobrescribir la etiqueta '" + name + "' con los datos actuales?")) return;
+
+    const saved = JSON.parse(localStorage.getItem('sga_labels') || '{}');
+    saved[name] = getFormData();
+    localStorage.setItem('sga_labels', JSON.stringify(saved));
+    alert("Etiqueta actualizada.");
+}
+
+// "Renombrar"
+function renameLabel(){
+    const oldName = document.getElementById('storage-select').value;
+    if(!oldName) {
+        alert("Seleccione una etiqueta para renombrar.");
+        return;
+    }
+    const newName = prompt("Nuevo nombre para '" + oldName + "':", oldName);
+    if(!newName || newName === oldName) return;
+
+    const saved = JSON.parse(localStorage.getItem('sga_labels') || '{}');
+    if(saved[newName] && !confirm("Ya existe '" + newName + "'. ¿Sobrescribirla?")) return;
+
+    // Copiar datos al nuevo nombre
+    saved[newName] = saved[oldName];
+    // Borrar nombre viejo
+    delete saved[oldName];
+
+    localStorage.setItem('sga_labels', JSON.stringify(saved));
+    updateStorageSelect();
+    // Seleccionar el nuevo nombre
+    document.getElementById('storage-select').value = newName;
 }
 
 function loadLabel(){
@@ -824,7 +882,7 @@ function loadLabel(){
 function deleteLabel(){
     const name = document.getElementById('storage-select').value;
     if(!name) return;
-    if(!confirm("¿Borrar " + name + "?")) return;
+    if(!confirm("¿Borrar permanentemente '" + name + "'?")) return;
     const saved = JSON.parse(localStorage.getItem('sga_labels') || '{}');
     delete saved[name];
     localStorage.setItem('sga_labels', JSON.stringify(saved));
