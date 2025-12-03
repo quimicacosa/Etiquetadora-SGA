@@ -5,7 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Etiquetadora SGA</title>
 <style>
-    :root { --w: 100mm; --h: 100mm; --scale: 1; }
+    :root { 
+        --w: 100mm; 
+        --h: 100mm; 
+        --scale: 1; 
+        --fs-title: 24pt;
+        --fs-body: 10pt;
+    }
     body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #eef2f5; margin: 0; padding: 10px; color: #333; }
 
     .app { display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; }
@@ -36,6 +42,9 @@
     input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 14px; background: white; }
     textarea { resize: vertical; min-height: 70px; }
     input:focus, textarea:focus, select:focus { border-color: #1976d2; outline: none; }
+
+    .manual-controls { background: #e8f5e9; padding: 10px; border-radius: 6px; border: 1px solid #c8e6c9; display: none; margin-bottom: 15px; }
+    .manual-show { display: block; }
 
     .presets { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; justify-content: center; }
     .btn-pre { background: #e3f2fd; color: #1565c0; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
@@ -79,7 +88,6 @@
         padding: 4mm; box-sizing: border-box;
         display: flex; flex-direction: column;
         overflow: hidden; position: relative;
-
         transform: scale(var(--scale)); transform-origin: top center;
         box-shadow: 0 5px 25px rgba(0,0,0,0.2);
     }
@@ -91,7 +99,15 @@
         display: flex; justify-content: center; align-items: center;
         position: relative; min-height: 10mm; flex-shrink: 0;
     }
-    .l-name { font-family: Arial, sans-serif; font-size: 1.6em; font-weight: 900; text-transform: uppercase; text-align: center; width: 80%; line-height: 1.1; word-wrap: break-word; }
+    .l-name { 
+        font-family: Arial, sans-serif; 
+        font-size: var(--fs-title); 
+        font-weight: 900; 
+        text-align: center; 
+        width: 80%; 
+        line-height: 1.1; 
+        word-wrap: break-word; 
+    }
     .l-cas { position: absolute; right: 0; top: 0; font-size: 0.7em; font-family: monospace; font-weight: bold; }
 
     .l-body { display: flex; flex: 1; overflow: hidden; gap: 3mm; }
@@ -122,8 +138,8 @@
     }
 
     .l-col-right { width: 62%; display: flex; flex-direction: column; gap: 2mm; overflow: hidden; }
-    .t-h { font-weight: bold; font-size: 0.9em; line-height: 1.25; white-space: pre-wrap; color: black; }
-    .t-p { font-size: 0.8em; line-height: 1.2; color: #222; white-space: pre-wrap; }
+    .t-h { font-weight: bold; font-size: var(--fs-body); line-height: 1.25; white-space: pre-wrap; color: black; }
+    .t-p { font-size: calc(var(--fs-body) * 0.9); line-height: 1.2; color: #222; white-space: pre-wrap; }
 
     .l-foot { margin-top: 2mm; border-top: 1px solid black; padding-top: 1mm; font-size: 0.7em; text-align: center; font-weight: bold; flex-shrink: 0; }
     sub { font-size: 0.75em; vertical-align: sub; }
@@ -189,6 +205,22 @@
                 </div>
             </div>
 
+            <div class="group" style="display: flex; align-items: center; gap: 10px; background: #fafafa; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                <input type="checkbox" id="chk-manual" onchange="upd()" style="width: auto;">
+                <label for="chk-manual" style="margin:0; cursor: pointer;">Activar Modo Manual</label>
+            </div>
+
+            <div id="manual-opts" class="manual-controls">
+                <div class="group">
+                    <label>Tamaño Título (Nombre)</label>
+                    <input type="range" id="rng-fs-title" min="10" max="60" value="24" oninput="upd()">
+                </div>
+                <div class="group">
+                    <label>Tamaño Texto (H y P)</label>
+                    <input type="range" id="rng-fs-body" min="6" max="24" value="10" oninput="upd()">
+                </div>
+            </div>
+
             <div class="group">
                 <label>Zoom Vista Previa</label>
                 <input type="range" id="inp-scale" min="0.5" max="1.5" step="0.1" value="1" oninput="upd()">
@@ -196,7 +228,7 @@
 
             <div class="group">
                 <label>Nombre del Producto</label>
-                <input type="text" id="inp-name" placeholder="Ej. ACETONA" oninput="upd()">
+                <input type="text" id="inp-name" placeholder="Ej. ACETONA (HCl)" oninput="upd()">
             </div>
 
             <div class="group">
@@ -209,6 +241,7 @@
                 <select id="inp-signal" onchange="upd()">
                     <option value="PELIGRO">PELIGRO</option>
                     <option value="ATENCIÓN">ATENCIÓN</option>
+                    <option value="">(NINGUNA)</option>
                 </select>
             </div>
 
@@ -238,7 +271,6 @@
 
             <button type="button" class="btn-print" onclick="window.print()">IMPRIMIR</button>
         </div>
-
         
         <div class="preview-col">
             <div class="preview-bg">
@@ -567,7 +599,7 @@ function togglePic(k, el) {
 function fill(name) {
     const t = dataPresets[name];
     if(!t) return;
-    document.getElementById('inp-name').value = name.toUpperCase();
+    document.getElementById('inp-name').value = name; 
     document.getElementById('inp-cas').value = t.c;
     document.getElementById('inp-signal').value = t.s;
     document.getElementById('inp-h').value = t.h;
@@ -631,18 +663,39 @@ function upd() {
         const w = document.getElementById('inp-width').value;
         const h = document.getElementById('inp-height').value;
         const scale = document.getElementById('inp-scale').value;
+        const isManual = document.getElementById('chk-manual').checked;
 
         const root = document.querySelector(':root');
         root.style.setProperty('--w', w + 'mm');
         root.style.setProperty('--h', h + 'mm');
         root.style.setProperty('--scale', scale);
 
+        const manualDiv = document.getElementById('manual-opts');
+        if(isManual) {
+            manualDiv.classList.add('manual-show');
+            const fsTitle = document.getElementById('rng-fs-title').value;
+            const fsBody = document.getElementById('rng-fs-body').value;
+            root.style.setProperty('--fs-title', fsTitle + 'pt');
+            root.style.setProperty('--fs-body', fsBody + 'pt');
+        } else {
+            manualDiv.classList.remove('manual-show');
+            root.style.setProperty('--fs-title', '24pt');
+            root.style.setProperty('--fs-body', '10pt');
+        }
+
         document.getElementById('out-name').innerHTML = format(document.getElementById('inp-name').value);
         document.getElementById('out-cas').innerText = "CAS: " + document.getElementById('inp-cas').value;
 
         const sig = document.getElementById('inp-signal').value;
-        document.getElementById('out-sig').innerText = sig;
-        document.getElementById('out-sig').style.color = sig === 'PELIGRO' ? '#d32f2f' : '#f57c00';
+        const sigEl = document.getElementById('out-sig');
+        
+        if(!sig) {
+            sigEl.style.display = 'none';
+        } else {
+            sigEl.style.display = 'block';
+            sigEl.innerText = sig;
+            sigEl.style.color = sig === 'PELIGRO' ? '#d32f2f' : '#f57c00';
+        }
 
         document.getElementById('out-h').innerHTML = format(document.getElementById('inp-h').value);
         document.getElementById('out-p').innerHTML = format(document.getElementById('inp-p').value);
