@@ -51,7 +51,6 @@
     .btn-pre { background: #e3f2fd; color: #1565c0; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
     .btn-pre:hover { background: #bbdefb; }
 
-    /* Estilos del panel de guardado actualizados */
     .storage-panel { background: #fff8e1; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ffe0b2; }
     .storage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
     .storage-full { grid-column: span 2; }
@@ -59,11 +58,11 @@
     .btn-action { width: 100%; padding: 8px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 0.75rem; transition: opacity 0.2s; }
     .btn-action:hover { opacity: 0.85; }
 
-    .btn-save-here { background: #2e7d32; } /* Verde oscuro */
-    .btn-save-as { background: #4caf50; } /* Verde claro */
-    .btn-rename { background: #1976d2; } /* Azul */
-    .btn-load { background: #ff9800; } /* Naranja */
-    .btn-del { background: #d32f2f; } /* Rojo */
+    .btn-save-here { background: #2e7d32; } 
+    .btn-save-as { background: #4caf50; } 
+    .btn-rename { background: #1976d2; } 
+    .btn-load { background: #ff9800; } 
+    .btn-del { background: #d32f2f; } 
 
     .btn-print { 
         width: 100%; padding: 15px; border: none; border-radius: 6px; 
@@ -794,11 +793,16 @@ function getFormData() {
         p: document.getElementById('inp-p').value,
         sup: document.getElementById('inp-sup').value,
         pics: Array.from(activePics),
-        dim: { w: document.getElementById('inp-width').value, h: document.getElementById('inp-height').value }
+        dim: { w: document.getElementById('inp-width').value, h: document.getElementById('inp-height').value },
+        manual: {
+            on: document.getElementById('chk-manual').checked,
+            t: document.getElementById('rng-fs-title').value,
+            c: document.getElementById('rng-fs-conc').value,
+            b: document.getElementById('rng-fs-body').value
+        }
     };
 }
 
-// "Guardar Como" (Crear nueva)
 function saveLabelNew(){
     const name = prompt("Nombre para la NUEVA etiqueta:");
     if(!name) return;
@@ -812,7 +816,6 @@ function saveLabelNew(){
     alert("Guardada como: " + name);
 }
 
-// "Guardar Aquí" (Sobrescribir actual)
 function saveLabelOverwrite(){
     const name = document.getElementById('storage-select').value;
     if(!name) {
@@ -827,7 +830,6 @@ function saveLabelOverwrite(){
     alert("Etiqueta actualizada.");
 }
 
-// "Renombrar"
 function renameLabel(){
     const oldName = document.getElementById('storage-select').value;
     if(!oldName) {
@@ -840,14 +842,11 @@ function renameLabel(){
     const saved = JSON.parse(localStorage.getItem('sga_labels') || '{}');
     if(saved[newName] && !confirm("Ya existe '" + newName + "'. ¿Sobrescribirla?")) return;
 
-    // Copiar datos al nuevo nombre
     saved[newName] = saved[oldName];
-    // Borrar nombre viejo
     delete saved[oldName];
 
     localStorage.setItem('sga_labels', JSON.stringify(saved));
     updateStorageSelect();
-    // Seleccionar el nuevo nombre
     document.getElementById('storage-select').value = newName;
 }
 
@@ -868,6 +867,16 @@ function loadLabel(){
             document.getElementById('inp-width').value = d.dim.w;
             document.getElementById('inp-height').value = d.dim.h;
         }
+
+        if(d.manual) {
+            document.getElementById('chk-manual').checked = d.manual.on;
+            document.getElementById('rng-fs-title').value = d.manual.t;
+            document.getElementById('rng-fs-conc').value = d.manual.c;
+            document.getElementById('rng-fs-body').value = d.manual.b;
+        } else {
+            document.getElementById('chk-manual').checked = false;
+        }
+
         activePics.clear();
         if(d.pics) d.pics.forEach(p => activePics.add(p));
 
