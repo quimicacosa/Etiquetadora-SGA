@@ -2,137 +2,76 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Etiquetadora SGA Móvil</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etiquetadora SGA</title>
 <style>
     :root { --w: 100mm; --h: 100mm; --scale: 1; }
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #eef2f5; margin: 0; padding: 10px; color: #333; }
 
-    html, body { 
-        width: 100%; 
-        overflow-x: hidden; 
-        margin: 0; padding: 0;
-        background: #eef2f5; 
-        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-        color: #333; 
-    }
+    .app { display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; }
+    .header { text-align: center; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    h2 { margin: 0; color: #2c3e50; }
 
-    body { padding: 10px; box-sizing: border-box; }
+    .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
 
-    .app { 
-        display: flex; 
-        flex-direction: column; 
-        gap: 15px; 
-        max-width: 1400px; 
-        margin: 0 auto; 
-        width: 100%;
-    }
+    .form-col { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
 
-    .header { 
-        text-align: center; 
-        background: white; 
-        padding: 12px; 
-        border-radius: 8px; 
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-    }
-    h2 { margin: 0; color: #2c3e50; font-size: 1.2rem; }
-
-    .main-grid { 
-        display: grid; 
-        grid-template-columns: 1fr; 
-        gap: 15px; 
-        width: 100%;
-    }
-
-    .form-col { 
-        background: white; 
-        padding: 15px; 
-        border-radius: 8px; 
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-        position: relative; 
-        order: 2; 
-    }
-
-    .preview-col { 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        width: 100%;
-        order: 1; 
-    }
-
+    .preview-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
     .preview-bg { 
         background: #607d8b; 
-        padding: 20px; 
+        padding: 30px; 
         border-radius: 12px; 
-        overflow: hidden; 
+        overflow: auto; 
         width: 100%; 
         display: flex; 
         justify-content: center; 
-        align-items: center;
-        min-height: 300px;
+        align-items: flex-start;
+        min-height: 400px;
         box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
         box-sizing: border-box;
-        position: relative;
     }
 
     .group { margin-bottom: 12px; position: relative; }
     label { display: block; font-weight: 700; margin-bottom: 5px; font-size: 0.85rem; color: #555; }
-    input, select, textarea { 
-        width: 100%; padding: 12px; 
-        border: 1px solid #ccc; border-radius: 6px; 
-        box-sizing: border-box; font-family: inherit; font-size: 16px; 
-        background: white; 
-    }
-    textarea { resize: vertical; min-height: 80px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 14px; background: white; }
+    textarea { resize: vertical; min-height: 70px; }
     input:focus, textarea:focus, select:focus { border-color: #1976d2; outline: none; }
 
-    .presets { 
-        display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; 
-        padding-bottom: 15px; border-bottom: 1px solid #eee; justify-content: center; 
-    }
-    .btn-pre { 
-        background: #e3f2fd; color: #1565c0; border: none; 
-        padding: 8px 16px; border-radius: 20px; cursor: pointer; 
-        font-size: 0.9rem; font-weight: 600; transition: 0.2s; 
-    }
+    .presets { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; justify-content: center; }
+    .btn-pre { background: #e3f2fd; color: #1565c0; border: none; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
     .btn-pre:hover { background: #bbdefb; }
 
     .storage-panel { background: #fff8e1; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ffe0b2; }
     .storage-row { display: flex; gap: 5px; margin-top: 5px; }
-    .btn-action { flex: 1; padding: 10px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
-    .btn-save { background: #4caf50; }
-    .btn-load { background: #ff9800; }
-    .btn-del { background: #f44336; }
+    .btn-action { flex: 1; padding: 8px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+    .btn-save { background: #4caf50; } .btn-save:hover { background: #388e3c; }
+    .btn-load { background: #ff9800; } .btn-load:hover { background: #f57c00; }
+    .btn-del { background: #f44336; } .btn-del:hover { background: #d32f2f; }
 
     .btn-print { 
         width: 100%; padding: 15px; border: none; border-radius: 6px; 
         font-weight: bold; color: white; cursor: pointer; font-size: 1.1rem;
-        background: #37474f; margin-top: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        background: #37474f; margin-top: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.2s;
     }
+    .btn-print:hover { background: #263238; }
 
+    .search-input { background: #f8f9fa; border: 1px solid #ddd; font-size: 13px; margin-bottom: 2px; }
     .results-list { 
-        max-height: 200px; overflow-y: auto; background: white; border: 1px solid #ccc; 
+        max-height: 180px; overflow-y: auto; background: white; border: 1px solid #ccc; 
         position: absolute; width: 100%; z-index: 1000; display: none; 
         box-shadow: 0 4px 15px rgba(0,0,0,0.2); border-radius: 0 0 6px 6px; top: 100%; 
     }
-    .result-item { padding: 12px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 13px; line-height: 1.4; }
-    .result-item:active { background: #e3f2fd; }
+    .result-item { padding: 8px 10px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 12px; line-height: 1.4; }
+    .result-item:last-child { border-bottom: none; }
+    .result-item:hover { background: #e3f2fd; color: #0d47a1; }
+    .result-item b { color: #c62828; margin-right: 4px; }
 
-    .picto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 10px; margin-top: 5px; }
-    .picto-opt { 
-        aspect-ratio: 1; border: 2px solid #eee; border-radius: 8px; cursor: pointer; 
-        padding: 5px; opacity: 0.6; transition: all 0.2s; display: flex; 
-        align-items: center; justify-content: center; background: white; 
-    }
-    .picto-opt.sel { border-color: #d32f2f; opacity: 1; background: #fffbee; transform: scale(1.05); }
+    .picto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 8px; margin-top: 5px; }
+    .picto-opt { aspect-ratio: 1; border: 2px solid #eee; border-radius: 6px; cursor: pointer; padding: 4px; opacity: 0.5; transition: all 0.2s; display: flex; align-items: center; justify-content: center; background: white; }
+    .picto-opt:hover { opacity: 0.9; border-color: #bbb; }
+    .picto-opt.sel { border-color: #d32f2f; opacity: 1; background: #fffbee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transform: scale(1.05); }
     .picto-opt img { width: 100%; height: 100%; object-fit: contain; }
-
-    #lbl-container {
-
-        display: flex; justify-content: center; align-items: center;
-        transition: transform 0.2s ease;
-    }
 
     #lbl {
         width: var(--w); height: var(--h);
@@ -140,10 +79,8 @@
         padding: 4mm; box-sizing: border-box;
         display: flex; flex-direction: column;
         overflow: hidden; position: relative;
-        flex-shrink: 0; 
 
-        transform: scale(var(--scale)); 
-        transform-origin: center center; 
+        transform: scale(var(--scale)); transform-origin: top center;
         box-shadow: 0 5px 25px rgba(0,0,0,0.2);
     }
 
@@ -158,32 +95,48 @@
     .l-cas { position: absolute; right: 0; top: 0; font-size: 0.7em; font-family: monospace; font-weight: bold; }
 
     .l-body { display: flex; flex: 1; overflow: hidden; gap: 3mm; }
-    .l-col-left { width: 38%; display: flex; flex-direction: column; justify-content: space-between; align-items: center; border-right: 1px dotted #999; padding-right: 2mm; flex-shrink: 0; }
-    .l-imgs { flex: 1; width: 100%; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 2px; min-height: 0; overflow: hidden; }
+
+    .l-col-left {
+        width: 38%; display: flex; flex-direction: column;
+        justify-content: space-between; align-items: center;
+        border-right: 1px dotted #999; padding-right: 2mm;
+        flex-shrink: 0;
+    }
+
+    .l-imgs {
+        flex: 1; width: 100%; display: flex; flex-wrap: wrap;
+        align-content: center; justify-content: center; gap: 2px;
+        min-height: 0; overflow: hidden;
+    }
     .ghs-box { display: flex; align-items: center; justify-content: center; }
-    .l-sig { margin-top: 5px; font-size: 1.3em; font-weight: 900; color: #d32f2f; text-transform: uppercase; text-align: center; width: 100%; flex-shrink: 0; padding: 2px 0; background: white; }
+    .ghs-box img { width: 100%; height: 100%; object-fit: contain; }
+
+    .l-sig {
+        margin-top: 5px; font-size: 1.3em; font-weight: 900; color: #d32f2f;
+        text-transform: uppercase; text-align: center; width: 100%;
+        flex-shrink: 0; padding: 2px 0; background: white;
+    }
+
     .l-col-right { width: 62%; display: flex; flex-direction: column; gap: 2mm; overflow: hidden; }
     .t-h { font-weight: bold; font-size: 0.9em; line-height: 1.25; white-space: pre-wrap; color: black; }
     .t-p { font-size: 0.8em; line-height: 1.2; color: #222; white-space: pre-wrap; }
+
     .l-foot { margin-top: 2mm; border-top: 1px solid black; padding-top: 1mm; font-size: 0.7em; text-align: center; font-weight: bold; flex-shrink: 0; }
     sub { font-size: 0.75em; vertical-align: sub; }
 
-    .zoom-controls { display: flex; gap: 10px; align-items: center; }
-    .btn-fit { background: #607d8b; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; white-space: nowrap; }
-
     @media (min-width: 1024px) {
         .main-grid { grid-template-columns: 420px 1fr; align-items: start; }
-        .form-col { max-height: 95vh; overflow-y: auto; position: sticky; top: 10px; order: 1; }
-        .preview-col { position: sticky; top: 10px; order: 2; }
+        .form-col { max-height: 95vh; overflow-y: auto; position: sticky; top: 10px; }
+        .preview-col { position: sticky; top: 10px; }
     }
 
     @media print {
         @page { size: auto; margin: 0mm; }
-        body { background: white; margin: 0; padding: 0; overflow: visible; }
+        body { background: white; margin: 0; padding: 0; }
         .header, .form-col, h2 { display: none !important; }
         .main-grid { display: block; }
         .preview-col { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; padding: 0; background: white; }
-        .preview-bg { background: white; padding: 0; box-shadow: none; display: flex; justify-content: center; align-items: flex-start; min-height: 0; overflow: visible; }
+        .preview-bg { background: white; padding: 0; box-shadow: none; display: flex; justify-content: center; align-items: flex-start; min-height: 0; }
         #lbl { 
             transform: none !important; 
             margin: 0 auto; 
@@ -202,35 +155,6 @@
     </div>
 
     <div class="main-grid">
-
-        
-        <div class="preview-col">
-            <div class="preview-bg" id="preview-bg">
-                <div id="lbl">
-                    <div id="lbl-inner">
-                        <div class="l-head">
-                            <div class="l-name" id="out-name">NOMBRE</div>
-                            <div class="l-cas" id="out-cas">CAS</div>
-                        </div>
-                        <div class="l-body">
-                            <div class="l-col-left">
-                                <div class="l-imgs" id="out-imgs"></div>
-                                <div class="l-sig" id="out-sig">PELIGRO</div>
-                            </div>
-                            <div class="l-col-right">
-                                <div class="t-h" id="out-h"></div>
-                                <div class="t-p" id="out-p"></div>
-                            </div>
-                        </div>
-                        <div class="l-foot" id="out-sup">PROVEEDOR</div>
-                    </div>
-                </div>
-            </div>
-            <div style="margin-top:5px; font-size:0.8rem; color:#777;">
-                Vista previa (La impresión será a tamaño real 100%)
-            </div>
-        </div>
-
         
         <div class="form-col">
             <div class="storage-panel">
@@ -253,20 +177,17 @@
             <div class="group" style="display:flex; gap:10px;">
                 <div style="flex:1">
                     <label>Ancho (mm)</label>
-                    <input type="number" id="inp-width" value="100" onchange="upd(); autoFit();">
+                    <input type="number" id="inp-width" value="100" oninput="upd()">
                 </div>
                 <div style="flex:1">
                     <label>Alto (mm)</label>
-                    <input type="number" id="inp-height" value="70" onchange="upd()">
+                    <input type="number" id="inp-height" value="70" oninput="upd()">
                 </div>
             </div>
 
             <div class="group">
                 <label>Zoom Vista Previa</label>
-                <div class="zoom-controls">
-                    <input type="range" id="inp-scale" min="0.3" max="1.5" step="0.05" value="1" oninput="upd()">
-                    <button type="button" class="btn-fit" onclick="autoFit()">Ajustar</button>
-                </div>
+                <input type="range" id="inp-scale" min="0.5" max="1.5" step="0.1" value="1" oninput="upd()">
             </div>
 
             <div class="group">
@@ -314,6 +235,30 @@
             <button type="button" class="btn-print" onclick="window.print()">IMPRIMIR</button>
         </div>
 
+        
+        <div class="preview-col">
+            <div class="preview-bg">
+                <div id="lbl">
+                    <div id="lbl-inner">
+                        <div class="l-head">
+                            <div class="l-name" id="out-name">NOMBRE</div>
+                            <div class="l-cas" id="out-cas">CAS</div>
+                        </div>
+                        <div class="l-body">
+                            <div class="l-col-left">
+                                <div class="l-imgs" id="out-imgs"></div>
+                                <div class="l-sig" id="out-sig">PELIGRO</div>
+                            </div>
+                            <div class="l-col-right">
+                                <div class="t-h" id="out-h"></div>
+                                <div class="t-p" id="out-p"></div>
+                            </div>
+                        </div>
+                        <div class="l-foot" id="out-sup">PROVEEDOR</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
