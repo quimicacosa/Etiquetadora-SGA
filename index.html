@@ -253,11 +253,11 @@
 
             <div class="group">
                 <label>Concentración (Opcional)</label>
-                <input type="text" id="inp-conc" placeholder="Ej. 0,5 mol/L (o dejar vacío)" oninput="upd()">
+                <input type="text" id="inp-conc" placeholder="Ej. 98% (o dejar vacío)" oninput="upd()">
             </div>
 
             <div class="group">
-                <label>CAS</label>
+                <label>CAS (Opcional)</label>
                 <input type="text" id="inp-cas" placeholder="00-00-0" oninput="upd()">
             </div>
 
@@ -290,7 +290,7 @@
             </div>
 
             <div class="group">
-                <label>Proveedor / Emergencia</label>
+                <label>Proveedor / Emergencia (Opcional)</label>
                 <input type="text" id="inp-sup" value="EMERGENCIAS: 911" oninput="upd()">
             </div>
 
@@ -723,7 +723,14 @@ function upd() {
             outConc.style.display = 'none';
         }
 
-        document.getElementById('out-cas').innerText = "CAS: " + document.getElementById('inp-cas').value;
+        const casVal = document.getElementById('inp-cas').value;
+        const outCas = document.getElementById('out-cas');
+        if(casVal.trim().length > 0) {
+            outCas.innerText = "CAS: " + casVal;
+            outCas.style.display = 'block';
+        } else {
+            outCas.style.display = 'none';
+        }
 
         const sig = document.getElementById('inp-signal').value;
         const sigEl = document.getElementById('out-sig');
@@ -738,7 +745,15 @@ function upd() {
 
         document.getElementById('out-h').innerHTML = format(document.getElementById('inp-h').value);
         document.getElementById('out-p').innerHTML = format(document.getElementById('inp-p').value);
-        document.getElementById('out-sup').innerText = document.getElementById('inp-sup').value;
+        
+        const supVal = document.getElementById('inp-sup').value;
+        const outSup = document.getElementById('out-sup');
+        if(supVal.trim().length > 0) {
+            outSup.innerText = supVal;
+            outSup.style.display = 'block';
+        } else {
+            outSup.style.display = 'none';
+        }
 
         const container = document.getElementById('out-imgs');
         container.innerHTML = "";
