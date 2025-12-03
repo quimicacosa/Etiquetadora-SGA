@@ -10,6 +10,7 @@
         --h: 100mm; 
         --scale: 1; 
         --fs-title: 24pt;
+        --fs-conc: 14pt;
         --fs-body: 10pt;
     }
     body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #eef2f5; margin: 0; padding: 10px; color: #333; }
@@ -99,15 +100,30 @@
         display: flex; justify-content: center; align-items: center;
         position: relative; min-height: 10mm; flex-shrink: 0;
     }
+    
+    .l-titles-wrap {
+        display: flex; flex-direction: column; align-items: center;
+        width: 85%;
+    }
+
     .l-name { 
         font-family: Arial, sans-serif; 
         font-size: var(--fs-title); 
         font-weight: 900; 
         text-align: center; 
-        width: 80%; 
+        width: 100%; 
         line-height: 1.1; 
         word-wrap: break-word; 
     }
+    .l-conc {
+        font-family: Arial, sans-serif;
+        font-size: var(--fs-conc);
+        font-weight: bold;
+        text-align: center;
+        margin-top: 2px;
+        color: #444;
+    }
+
     .l-cas { position: absolute; right: 0; top: 0; font-size: 0.7em; font-family: monospace; font-weight: bold; }
 
     .l-body { display: flex; flex: 1; overflow: hidden; gap: 3mm; }
@@ -216,6 +232,10 @@
                     <input type="range" id="rng-fs-title" min="10" max="60" value="24" oninput="upd()">
                 </div>
                 <div class="group">
+                    <label>Tamaño Concentración</label>
+                    <input type="range" id="rng-fs-conc" min="8" max="40" value="14" oninput="upd()">
+                </div>
+                <div class="group">
                     <label>Tamaño Texto (H y P)</label>
                     <input type="range" id="rng-fs-body" min="6" max="24" value="10" oninput="upd()">
                 </div>
@@ -229,6 +249,11 @@
             <div class="group">
                 <label>Nombre del Producto</label>
                 <input type="text" id="inp-name" placeholder="Ej. ACETONA (HCl)" oninput="upd()">
+            </div>
+
+            <div class="group">
+                <label>Concentración (Opcional)</label>
+                <input type="text" id="inp-conc" placeholder="Ej. 0,5 mol/L (o dejar vacío)" oninput="upd()">
             </div>
 
             <div class="group">
@@ -277,7 +302,10 @@
                 <div id="lbl">
                     <div id="lbl-inner">
                         <div class="l-head">
-                            <div class="l-name" id="out-name">NOMBRE</div>
+                            <div class="l-titles-wrap">
+                                <div class="l-name" id="out-name">NOMBRE</div>
+                                <div class="l-conc" id="out-conc" style="display:none"></div>
+                            </div>
                             <div class="l-cas" id="out-cas">CAS</div>
                         </div>
                         <div class="l-body">
@@ -313,11 +341,11 @@ const ghsUrls = {
 };
 
 const dataPresets = {
-    "Acetona": {c:"67-64-1", s:"PELIGRO", h:"H225: Líquido muy inflamable.\nH319: Irritación ocular grave.\nH336: Somnolencia.", p:"P210: Alejar del calor.\nP280: Usar guantes/gafas.", pics:["GHS02","GHS07"]},
-    "Etanol": {c:"64-17-5", s:"PELIGRO", h:"H225: Líquido muy inflamable.", p:"P210: Alejar de llamas.\nP233: Recipiente cerrado.", pics:["GHS02"]},
-    "Cloro": {c:"7681-52-9", s:"PELIGRO", h:"H314: Quemaduras graves.\nH400: Muy tóxico acuático.", p:"P273: No liberar al ambiente.\nP280: Protección total.", pics:["GHS05","GHS09"]},
-    "Acido": {c:"7647-01-0", s:"PELIGRO", h:"H314: Quemaduras graves piel/ojos.", p:"P260: No respirar vapores.\nP280: Equipo protección.", pics:["GHS05","GHS07"]},
-    "Gasolina": {c:"86290-81-5", s:"PELIGRO", h:"H224: Extremadamente inflamable.\nH350: Cáncer.\nH304: Mortal ingestión.", p:"P210: No fumar.", pics:["GHS02","GHS08","GHS07"]}
+    "Acetona": {c:"67-64-1", con:"", s:"PELIGRO", h:"H225: Líquido muy inflamable.\nH319: Irritación ocular grave.\nH336: Somnolencia.", p:"P210: Alejar del calor.\nP280: Usar guantes/gafas.", pics:["GHS02","GHS07"]},
+    "Etanol": {c:"64-17-5", con:"96%", s:"PELIGRO", h:"H225: Líquido muy inflamable.", p:"P210: Alejar de llamas.\nP233: Recipiente cerrado.", pics:["GHS02"]},
+    "Cloro": {c:"7681-52-9", con:"", s:"PELIGRO", h:"H314: Quemaduras graves.\nH400: Muy tóxico acuático.", p:"P273: No liberar al ambiente.\nP280: Protección total.", pics:["GHS05","GHS09"]},
+    "Acido": {c:"7647-01-0", con:"37%", s:"PELIGRO", h:"H314: Quemaduras graves piel/ojos.", p:"P260: No respirar vapores.\nP280: Equipo protección.", pics:["GHS05","GHS07"]},
+    "Gasolina": {c:"86290-81-5", con:"", s:"PELIGRO", h:"H224: Extremadamente inflamable.\nH350: Cáncer.\nH304: Mortal ingestión.", p:"P210: No fumar.", pics:["GHS02","GHS08","GHS07"]}
 };
 
 const pPhrasesRaw = `
@@ -421,7 +449,7 @@ P333 + P313 – En caso de irritación o erupción cutánea: Consultar a un méd
 P337 + P313 – Si persiste la irritación ocular: Consultar a un médico.
 P342 + P311 – En caso de síntomas respiratorios: Llamar a un CENTRO DE TOXICOLOGĺA/médico/…
 P361 + P364 – Quitar inmediatamente todas las prendas contaminadas y lavarlas antes de volver a usarlas.
-P362 + P364 – Quitar las prendas contaminadas y lavarlas antes de volver a usarlas.
+P361 + P364 – Quitar las prendas contaminadas y lavarlas antes de volver a usarlas.
 P370 + P376 – En caso de incendio: Detener la fuga, si no hay peligro en hacerlo.
 P370 + P378 – En caso de incendio: Utilizar… para la extinción.
 P370 + P380 + P375 – En caso de incendio: Evacuar la zona. Luchar contra el incendio a distancia, dado el riesgo de explosión.
@@ -600,6 +628,7 @@ function fill(name) {
     const t = dataPresets[name];
     if(!t) return;
     document.getElementById('inp-name').value = name; 
+    document.getElementById('inp-conc').value = t.con || "";
     document.getElementById('inp-cas').value = t.c;
     document.getElementById('inp-signal').value = t.s;
     document.getElementById('inp-h').value = t.h;
@@ -673,17 +702,27 @@ function upd() {
         const manualDiv = document.getElementById('manual-opts');
         if(isManual) {
             manualDiv.classList.add('manual-show');
-            const fsTitle = document.getElementById('rng-fs-title').value;
-            const fsBody = document.getElementById('rng-fs-body').value;
-            root.style.setProperty('--fs-title', fsTitle + 'pt');
-            root.style.setProperty('--fs-body', fsBody + 'pt');
+            root.style.setProperty('--fs-title', document.getElementById('rng-fs-title').value + 'pt');
+            root.style.setProperty('--fs-conc', document.getElementById('rng-fs-conc').value + 'pt');
+            root.style.setProperty('--fs-body', document.getElementById('rng-fs-body').value + 'pt');
         } else {
             manualDiv.classList.remove('manual-show');
             root.style.setProperty('--fs-title', '24pt');
+            root.style.setProperty('--fs-conc', '14pt');
             root.style.setProperty('--fs-body', '10pt');
         }
 
         document.getElementById('out-name').innerHTML = format(document.getElementById('inp-name').value);
+        
+        const concVal = document.getElementById('inp-conc').value;
+        const outConc = document.getElementById('out-conc');
+        if(concVal.trim().length > 0) {
+            outConc.innerHTML = format(concVal);
+            outConc.style.display = 'block';
+        } else {
+            outConc.style.display = 'none';
+        }
+
         document.getElementById('out-cas').innerText = "CAS: " + document.getElementById('inp-cas').value;
 
         const sig = document.getElementById('inp-signal').value;
@@ -723,6 +762,7 @@ function saveLabel(){
     if(!name) return;
     const obj = {
         n: document.getElementById('inp-name').value,
+        conc: document.getElementById('inp-conc').value,
         c: document.getElementById('inp-cas').value,
         s: document.getElementById('inp-signal').value,
         h: document.getElementById('inp-h').value,
@@ -745,6 +785,7 @@ function loadLabel(){
     const d = saved[name];
     if(d){
         document.getElementById('inp-name').value = d.n;
+        document.getElementById('inp-conc').value = d.conc || "";
         document.getElementById('inp-cas').value = d.c;
         document.getElementById('inp-signal').value = d.s;
         document.getElementById('inp-h').value = d.h;
