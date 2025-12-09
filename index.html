@@ -18,6 +18,8 @@
     .app { display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; }
     .header { text-align: center; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
     h2 { margin: 0; color: #2c3e50; }
+    .credits-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; font-size: 0.8rem; color: #7f8c8d; line-height: 1.4; }
+    .credits-box strong { color: #555; }
     .main-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
     .form-col { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
     .preview-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
@@ -151,6 +153,10 @@
 <div class="app">
     <div class="header">
         <h2>Etiquetadora SGA</h2>
+        <div class="credits-box">
+            Proyecto Tutoría — <strong>Instituto Galileo Galilei</strong><br>
+            Autor: <strong>Ignacio Prantl</strong> | Docente Guía: <strong>Natalia Molina</strong>
+        </div>
     </div>
     <div class="main-grid">
         <div class="form-col">
@@ -239,9 +245,15 @@
                 <div id="res-p" class="results-list"></div>
                 <textarea id="inp-p" oninput="upd()"></textarea>
             </div>
-            <div class="group">
-                <label>Proveedor / Emergencia (Opcional)</label>
-                <input type="text" id="inp-sup" value="EMERGENCIAS: 911" oninput="upd()">
+            <div class="group" style="display:flex; gap:10px;">
+                <div style="flex:2">
+                    <label>Proveedor / Emergencia</label>
+                    <input type="text" id="inp-sup" value="EMERGENCIAS: 911" oninput="upd()">
+                </div>
+                <div style="flex:1">
+                    <label>Fecha (Opc.)</label>
+                    <input type="date" id="inp-date" oninput="upd()">
+                </div>
             </div>
             <div class="group">
                 <label>Descargar Imagen</label>
@@ -465,9 +477,16 @@ function upd() {
         document.getElementById('out-h').innerHTML = format(document.getElementById('inp-h').value);
         document.getElementById('out-p').innerHTML = format(document.getElementById('inp-p').value);
         const supVal = document.getElementById('inp-sup').value;
+        const dateVal = document.getElementById('inp-date').value;
+        let dateStr = "";
+        if(dateVal) {
+            const parts = dateVal.split('-');
+            dateStr = `Fecha: ${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
         const outSup = document.getElementById('out-sup');
-        if(supVal.trim().length > 0) {
-            outSup.innerText = supVal;
+        const finalFoot = [supVal, dateStr].filter(Boolean).join(" - ");
+        if(finalFoot.trim().length > 0) {
+            outSup.innerText = finalFoot;
             outSup.style.display = 'block';
         } else { outSup.style.display = 'none'; }
         const container = document.getElementById('out-imgs');
@@ -493,6 +512,7 @@ function getFormData() {
         h: document.getElementById('inp-h').value,
         p: document.getElementById('inp-p').value,
         sup: document.getElementById('inp-sup').value,
+        date: document.getElementById('inp-date').value,
         pics: Array.from(activePics),
         dim: { w: document.getElementById('inp-width').value, h: document.getElementById('inp-height').value },
         manual: {
@@ -549,6 +569,7 @@ function loadLabel(){
         document.getElementById('inp-h').value = d.h;
         document.getElementById('inp-p').value = d.p;
         document.getElementById('inp-sup').value = d.sup || "";
+        document.getElementById('inp-date').value = d.date || "";
         if(d.dim) {
             document.getElementById('inp-width').value = d.dim.w;
             document.getElementById('inp-height').value = d.dim.h;
