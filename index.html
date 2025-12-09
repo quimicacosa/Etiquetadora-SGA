@@ -641,8 +641,10 @@ function format(txt) {
     if(!txt) return "";
     return txt
         .replace(/\n/g, '<br>')
+        
         .replace(/_(\d+)/g, '<sub>$1</sub>')
-        .replace(/!([^\-]+)-/g, '<sup>$1</sup>');
+        
+        .replace(/!([0-9\+\-]+)/g, '<sup>$1</sup>');
 }
 function calcPictoSize(count) {
     if (count <= 4) return "42%";
