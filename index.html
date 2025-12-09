@@ -50,6 +50,20 @@
     .btn-pre:hover { background: #bbdefb; }
     .storage-panel { background: #fff8e1; padding: 10px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #ffe0b2; }
     .storage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px; }
+    
+    .ai-panel { background: #f3e5f5; border: 1px solid #e1bee7; padding: 10px; border-radius: 6px; margin-bottom: 15px; cursor: pointer; }
+    .ai-panel[open] { cursor: default; }
+    .ai-summary { font-weight: bold; color: #6a1b9a; outline: none; list-style: none; display: flex; align-items: center; gap: 5px; }
+    .ai-summary::-webkit-details-marker { display: none; }
+    .ai-content { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .ai-grid { display: grid; grid-template-columns: 1fr 100px; gap: 5px; }
+    .btn-ai { border: none; padding: 8px; border-radius: 4px; font-weight: bold; color: white; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+    .btn-copy { background: #8e24aa; }
+    .btn-apply { background: #4a148c; height: 100%; }
+    .btn-copy:hover { background: #7b1fa2; }
+    .btn-apply:hover { background: #38006b; }
+    .ai-input { font-family: monospace; font-size: 11px; min-height: 60px; border-color: #ce93d8; }
+    
     .storage-full { grid-column: span 2; }
     .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px; }
     .btn-img { padding: 10px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: opacity 0.2s; }
@@ -149,6 +163,7 @@
         white-space: nowrap; overflow: hidden;
     }
     sub { font-size: 0.75em; vertical-align: sub; }
+    sup { font-size: 0.75em; vertical-align: super; }
     .cas-bottom { font-family: monospace; }
 
     @media (min-width: 1024px) {
@@ -178,6 +193,20 @@
     </div>
     <div class="main-grid">
         <div class="form-col">
+            <details class="ai-panel">
+                <summary class="ai-summary">Asistente IA (PDF a Etiqueta)</summary>
+                <div class="ai-content">
+                    <div style="font-size:0.8rem; color:#555;">
+                        1. Copia el Prompt. 2. Pégalo en tu IA junto al PDF. 3. Pega aquí el JSON.
+                    </div>
+                    <button class="btn-ai btn-copy" onclick="copyPrompt()">1. Copiar Prompt</button>
+                    <div class="ai-grid">
+                        <textarea id="ai-json-input" class="ai-input" placeholder="Pega aquí el JSON de la IA..."></textarea>
+                        <button class="btn-ai btn-apply" onclick="applyAI()">2. Aplicar Datos</button>
+                    </div>
+                </div>
+            </details>
+
             <div class="storage-panel">
                 <label>Gestión de Etiquetas</label>
                 <select id="storage-select"></select>
@@ -234,7 +263,7 @@
                     <label>Tamaño Texto (H y P)</label>
                     <input type="range" id="rng-fs-body" min="4" max="24" value="9" oninput="upd()">
                 </div>
-                <div class="group">
+                <div class="group" id="grp-fs-cas">
                     <label>Tamaño CAS</label>
                     <input type="range" id="rng-fs-cas" min="6" max="20" value="8" oninput="upd()">
                 </div>
@@ -334,6 +363,89 @@
     </div>
 </div>
 <script>
+const aiPrompt = `Actúa como un experto en seguridad química y etiquetado SGA (GHS). He adjuntado una Ficha de Datos de Seguridad (FDS / MSDS).
+
+Tu tarea es extraer los datos para rellenar automáticamente una etiqueta de seguridad. Analiza el PDF y extrae la información con el formato JSON EXACTO que se especifica abajo:
+
+1. NOMBRE (Clave: "name"):
+   - Limpia el nombre: Elimina marcas (Sigma, Rotisolv), calidades (HPLC, p.a.) y símbolos.
+   - Busca la FÓRMULA química.
+   - Formato FINAL: "Nombre Común (F_xO_y)".
+   - IMPORTANTE: Usa guion bajo "_" antes de los números de la fórmula para subíndices (ej: H2SO4 -> H_2SO_4).
+
+2. CAS (Clave: "cas"): Formato XX-XX-X.
+
+3. PALABRA DE ADVERTENCIA (Clave: "signal"): Solo "PELIGRO" o "ATENCIÓN".
+
+4. CONCENTRACIÓN (Clave: "conc"): Si aplica (ej: "37%", "1 mol/L"). Si es puro, dejar vacío "".
+
+5. FRASES H (Clave: "h"): Cadena de texto. Pon el código y el texto, separadas por saltos de línea \\n. (ej: "Inflamable\\nIrrita ojos").
+   - IMPORTANTE: No añadas el(ejemplo) "H200:", usar eso es un formato equivocado, solo pon el texto que es atribuido al H o P.
+6. FRASES P (Clave: "p"): Cadena de texto. Selecciona máximo 6 frases clave de prevención/respuesta. Separadas por \\n.
+
+7. PICTOGRAMAS (Clave: "pics"): Array de strings con los códigos GHS detectados: ["GHS01","GHS02","GHS03","GHS04","GHS05","GHS06","GHS07","GHS08","GHS09"].
+
+---
+Responde SOLAMENTE con el bloque JSON crudo, sin texto antes ni después:
+
+{
+  "name": "Acetona (C_3H_6O)",
+  "cas": "67-64-1",
+  "conc": "",
+  "signal": "PELIGRO",
+  "h": "Líquido muy inflamable...",
+  "p": "Alejar del calor...",
+  "pics": ["GHS02", "GHS07"]
+}`;
+
+function copyPrompt() {
+    navigator.clipboard.writeText(aiPrompt).then(() => {
+        alert("Prompt copiado al portapapeles.\nAhora pégalo en Gemini/Chatgpt junto a tu PDF.");
+    });
+}
+
+function applyAI() {
+    const input = document.getElementById('ai-json-input').value;
+    if(!input.trim()) { alert("Pega primero el JSON de la IA."); return; }
+    
+    try {
+        let clean = input.replace(/```json/g, '').replace(/```/g, '').trim();
+        const data = JSON.parse(clean);
+        
+        if(data.name) document.getElementById('inp-name').value = data.name;
+        if(data.cas) document.getElementById('inp-cas').value = data.cas;
+        if(data.conc !== undefined) document.getElementById('inp-conc').value = data.conc;
+        
+        if(data.signal) {
+            let sig = data.signal.toUpperCase();
+            if(sig.includes("PELIGRO") || sig.includes("DANGER")) document.getElementById('inp-signal').value = "PELIGRO";
+            else if(sig.includes("ATENCIÓN") || sig.includes("WARNING")) document.getElementById('inp-signal').value = "ATENCIÓN";
+            else document.getElementById('inp-signal').value = "";
+        }
+        
+        if(data.h) document.getElementById('inp-h').value = data.h;
+        if(data.p) document.getElementById('inp-p').value = data.p;
+        
+        if(data.pics && Array.isArray(data.pics)) {
+            activePics.clear();
+            document.querySelectorAll('.picto-opt').forEach(el => {
+                el.classList.remove('sel');
+                if(data.pics.includes(el.dataset.code)) {
+                    activePics.add(el.dataset.code);
+                    el.classList.add('sel');
+                }
+            });
+        }
+        
+        upd();
+        alert("Datos aplicados correctamente.");
+        document.querySelector('.ai-panel').removeAttribute('open'); 
+        
+    } catch(e) {
+        alert("Error al leer el JSON. Asegúrate de copiar solo el bloque {...} que dio la IA.\n\nError: " + e.message);
+    }
+}
+
 const ghsUrls = {
     "GHS01": "https://upload.wikimedia.org/wikipedia/commons/4/4a/GHS-pictogram-explos.svg",
     "GHS02": "https://upload.wikimedia.org/wikipedia/commons/6/6d/GHS-pictogram-flamme.svg",
@@ -527,7 +639,10 @@ function searchPhrase(q, type){
 }
 function format(txt) {
     if(!txt) return "";
-    return txt.replace(/\n/g, '<br>').replace(/_(\d+)/g, '<sub>$1</sub>');
+    return txt
+        .replace(/\n/g, '<br>')
+        .replace(/_(\d+)/g, '<sub>$1</sub>')
+        .replace(/!([^\-]+)-/g, '<sup>$1</sup>');
 }
 function calcPictoSize(count) {
     if (count <= 4) return "42%";
@@ -579,6 +694,8 @@ function upd() {
         const manualDiv = document.getElementById('manual-opts');
         let tSize = 22, cSize = 12, bSize = 9, casSize = 8, fSize = 7;
         
+        const casPos = document.getElementById('sel-cas-pos').value;
+        
         if(isManual) {
             manualDiv.classList.add('manual-show');
             tSize = parseFloat(document.getElementById('rng-fs-title').value);
@@ -586,6 +703,17 @@ function upd() {
             bSize = parseFloat(document.getElementById('rng-fs-body').value);
             casSize = parseFloat(document.getElementById('rng-fs-cas').value);
             fSize = parseFloat(document.getElementById('rng-fs-foot').value);
+            
+            document.getElementById('out-name').style.removeProperty('font-size');
+            document.getElementById('l-text-body').style.removeProperty('font-size');
+
+            const grpCas = document.getElementById('grp-fs-cas');
+            if(casPos === 'top') {
+                grpCas.style.display = 'block';
+            } else {
+                grpCas.style.display = 'none';
+            }
+
         } else {
             manualDiv.classList.remove('manual-show');
         }
@@ -606,7 +734,6 @@ function upd() {
         } else { outConc.style.display = 'none'; }
 
         const casVal = document.getElementById('inp-cas').value;
-        const casPos = document.getElementById('sel-cas-pos').value;
         const outCasTop = document.getElementById('out-cas-top');
         const outCasBot = document.getElementById('out-cas-bottom');
         
