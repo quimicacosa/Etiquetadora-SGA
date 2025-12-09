@@ -10,9 +10,11 @@
         --w: 100mm; 
         --h: 100mm; 
         --scale: 1; 
-        --fs-title: 24pt;
-        --fs-conc: 14pt;
-        --fs-body: 10pt;
+        --fs-title: 22pt;
+        --fs-conc: 12pt;
+        --fs-body: 9pt;
+        --fs-cas: 8pt;
+        --fs-foot: 7pt;
     }
     body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #eef2f5; margin: 0; padding: 10px; color: #333; }
     .app { display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; }
@@ -60,7 +62,9 @@
     .btn-save-as { background: #4caf50; } 
     .btn-rename { background: #1976d2; } 
     .btn-load { background: #ff9800; } 
-    .btn-del { background: #d32f2f; } 
+    .btn-del { background: #d32f2f; }
+    .btn-exp { background: #5d4037; }
+    .btn-imp { background: #795548; }
     .btn-print { 
         width: 100%; padding: 15px; border: none; border-radius: 6px; 
         font-weight: bold; color: white; cursor: pointer; font-size: 1.1rem;
@@ -86,52 +90,66 @@
     #lbl {
         width: var(--w); height: var(--h);
         background: white; border: 1px solid #333;
-        padding: 4mm; box-sizing: border-box;
+        padding: 3mm; box-sizing: border-box;
         display: flex; flex-direction: column;
         overflow: hidden; position: relative;
         transform: scale(var(--scale)); transform-origin: top center;
         box-shadow: 0 5px 25px rgba(0,0,0,0.2);
     }
-    #lbl-inner { display: flex; flex-direction: column; height: 100%; width: 100%; font-size: 10pt; }
+    #lbl-inner { display: flex; flex-direction: column; height: 100%; width: 100%; }
     .l-head {
-        border-bottom: 2px solid black; padding-bottom: 2mm; margin-bottom: 2mm;
+        border-bottom: 2px solid black; padding-bottom: 1mm; margin-bottom: 1mm;
         display: flex; justify-content: center; align-items: center;
-        position: relative; min-height: 10mm; flex-shrink: 0;
+        position: relative; min-height: auto; flex-shrink: 0;
     }
-    .l-titles-wrap { display: flex; flex-direction: column; align-items: center; width: 85%; }
+    .l-titles-wrap { display: flex; flex-direction: column; align-items: center; width: 100%; }
     .l-name { 
         font-family: Arial, sans-serif; font-size: var(--fs-title); 
         font-weight: 900; text-align: center; width: 100%; 
-        line-height: 1.1; word-wrap: break-word; 
+        line-height: 1.0; word-wrap: break-word; 
+        padding: 0 1mm; 
     }
     .l-conc {
         font-family: Arial, sans-serif; font-size: var(--fs-conc);
-        font-weight: bold; text-align: center; margin-top: 2px; color: #444;
+        font-weight: bold; text-align: center; margin-top: 1px; color: #444; line-height: 1.1;
     }
-    .l-cas { position: absolute; right: 0; top: 0; font-size: 0.7em; font-family: monospace; font-weight: bold; }
-    .l-body { display: flex; flex: 1; overflow: hidden; gap: 3mm; }
+    .l-cas-top { 
+        position: absolute; right: 0; top: 0; 
+        font-size: var(--fs-cas); font-family: monospace; font-weight: bold; 
+        background: #fff; padding-left: 5px; border-radius: 0 0 0 4px;
+        z-index: 2;
+    }
+    .l-body { display: flex; flex: 1; overflow: hidden; gap: 2mm; min-height: 0; }
     .l-col-left {
         width: 38%; display: flex; flex-direction: column;
-        justify-content: space-between; align-items: center;
-        border-right: 1px dotted #999; padding-right: 2mm; flex-shrink: 0;
+        justify-content: flex-start; align-items: center;
+        border-right: 1px dotted #999; padding-right: 1.5mm; flex-shrink: 0;
+        overflow: hidden;
     }
     .l-imgs {
         flex: 1; width: 100%; display: flex; flex-wrap: wrap;
         align-content: center; justify-content: center; gap: 2px;
-        min-height: 0; overflow: hidden; padding: 4px; box-sizing: border-box;
+        min-height: 0; overflow: hidden; padding: 1px; box-sizing: border-box;
     }
     .ghs-box { display: flex; align-items: center; justify-content: center; }
     .ghs-box img { width: 100%; height: 100%; object-fit: contain; }
     .l-sig {
-        margin-top: 5px; font-size: 1.3em; font-weight: 900; color: #d32f2f;
+        margin-top: auto; padding-top: 3px; 
+        font-size: 1.2em; font-weight: 900; color: #d32f2f;
         text-transform: uppercase; text-align: center; width: 100%;
-        flex-shrink: 0; padding: 2px 0; background: white;
+        flex-shrink: 0; background: white;
     }
-    .l-col-right { width: 62%; display: flex; flex-direction: column; gap: 2mm; overflow: hidden; }
-    .t-h { font-weight: bold; font-size: var(--fs-body); line-height: 1.25; white-space: pre-wrap; color: black; }
-    .t-p { font-size: calc(var(--fs-body) * 0.9); line-height: 1.2; color: #222; white-space: pre-wrap; }
-    .l-foot { margin-top: 2mm; border-top: 1px solid black; padding-top: 1mm; font-size: 0.7em; text-align: center; font-weight: bold; flex-shrink: 0; }
+    .l-col-right { width: 62%; display: flex; flex-direction: column; gap: 1mm; overflow: hidden; justify-content: flex-start; }
+    .t-h { font-weight: bold; font-size: var(--fs-body); line-height: 1.15; white-space: pre-wrap; color: black; }
+    .t-p { font-size: calc(var(--fs-body) * 0.95); line-height: 1.15; color: #222; white-space: pre-wrap; padding-top: 1mm; }
+    .l-foot { 
+        margin-top: 1mm; border-top: 1px solid black; padding-top: 0.5mm; 
+        font-size: var(--fs-foot); font-weight: bold; flex-shrink: 0; 
+        display: flex; justify-content: space-between; align-items: flex-end;
+        white-space: nowrap; overflow: hidden;
+    }
     sub { font-size: 0.75em; vertical-align: sub; }
+    .cas-bottom { font-family: monospace; }
 
     @media (min-width: 1024px) {
         .main-grid { grid-template-columns: 420px 1fr; align-items: start; }
@@ -168,14 +186,19 @@
                     <button class="btn-action btn-save-here" onclick="saveLabelOverwrite()">Guardar aquí</button>
                     <button class="btn-action btn-save-as" onclick="saveLabelNew()">Guardar como...</button>
                     <button class="btn-action btn-rename" onclick="renameLabel()">Renombrar</button>
-                    <button class="btn-action btn-del storage-full" onclick="deleteLabel()">Borrar Etiqueta</button>
+                    <button class="btn-action btn-del" onclick="deleteLabel()">Borrar</button>
+                    <button class="btn-action btn-exp" onclick="exportData()">Exportar DB</button>
+                    <button class="btn-action btn-imp storage-full" onclick="document.getElementById('file-import').click()">Importar Respaldo</button>
+                    <input type="file" id="file-import" style="display:none" onchange="importData(this)">
                 </div>
             </div>
             <div class="presets">
                 <button type="button" class="btn-pre" onclick="fill('Acetona')">Acetona</button>
-                <button type="button" class="btn-pre" onclick="fill('Gasolina')">Gasolina</button>
-                <button type="button" class="btn-pre" onclick="fill('Cloro')">Cloro</button>
-                <button type="button" class="btn-pre" onclick="fill('Acido')">Ácido</button>
+                <button type="button" class="btn-pre" onclick="fill('HCl')">Ácido Clorhídrico</button>
+                <button type="button" class="btn-pre" onclick="fill('NaOH')">Hidróxido de Sodio</button>
+                <button type="button" class="btn-pre" onclick="fill('Etanol')">Etanol</button>
+                <button type="button" class="btn-pre" onclick="fill('Cromato')">Dicromato K</button>
+                <button type="button" class="btn-pre" onclick="fill('Tolueno')">Tolueno</button>
             </div>
             <div class="group" style="display:flex; gap:10px;">
                 <div style="flex:1">
@@ -193,16 +216,31 @@
             </div>
             <div id="manual-opts" class="manual-controls">
                 <div class="group">
+                    <label>Posición del CAS</label>
+                    <select id="sel-cas-pos" onchange="upd()">
+                        <option value="bottom">Abajo Izquierda (Defecto)</option>
+                        <option value="top">Arriba Derecha</option>
+                    </select>
+                </div>
+                <div class="group">
                     <label>Tamaño Título (Nombre)</label>
-                    <input type="range" id="rng-fs-title" min="10" max="60" value="24" oninput="upd()">
+                    <input type="range" id="rng-fs-title" min="10" max="60" value="22" oninput="upd()">
                 </div>
                 <div class="group">
                     <label>Tamaño Concentración</label>
-                    <input type="range" id="rng-fs-conc" min="8" max="40" value="14" oninput="upd()">
+                    <input type="range" id="rng-fs-conc" min="8" max="40" value="12" oninput="upd()">
                 </div>
                 <div class="group">
                     <label>Tamaño Texto (H y P)</label>
-                    <input type="range" id="rng-fs-body" min="6" max="24" value="10" oninput="upd()">
+                    <input type="range" id="rng-fs-body" min="4" max="24" value="9" oninput="upd()">
+                </div>
+                <div class="group">
+                    <label>Tamaño CAS</label>
+                    <input type="range" id="rng-fs-cas" min="6" max="20" value="8" oninput="upd()">
+                </div>
+                <div class="group">
+                    <label>Tamaño Footer (Prov/Fecha)</label>
+                    <input type="range" id="rng-fs-foot" min="5" max="16" value="7" oninput="upd()">
                 </div>
             </div>
             <div class="group">
@@ -273,19 +311,22 @@
                                 <div class="l-name" id="out-name">NOMBRE</div>
                                 <div class="l-conc" id="out-conc" style="display:none"></div>
                             </div>
-                            <div class="l-cas" id="out-cas">CAS</div>
+                            <div class="l-cas-top" id="out-cas-top" style="display:none"></div>
                         </div>
                         <div class="l-body">
                             <div class="l-col-left">
                                 <div class="l-imgs" id="out-imgs"></div>
                                 <div class="l-sig" id="out-sig">PELIGRO</div>
                             </div>
-                            <div class="l-col-right">
+                            <div class="l-col-right" id="l-text-body">
                                 <div class="t-h" id="out-h"></div>
                                 <div class="t-p" id="out-p"></div>
                             </div>
                         </div>
-                        <div class="l-foot" id="out-sup">PROVEEDOR</div>
+                        <div class="l-foot">
+                            <div class="cas-bottom" id="out-cas-bottom"></div>
+                            <div id="out-sup">PROVEEDOR</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -305,14 +346,51 @@ const ghsUrls = {
     "GHS09": "https://upload.wikimedia.org/wikipedia/commons/b/b9/GHS-pictogram-pollu.svg"
 };
 const dataPresets = {
-    "Acetona": {c:"67-64-1", con:"", s:"PELIGRO", h:"H225: Líquido muy inflamable.\nH319: Irritación ocular grave.\nH336: Somnolencia.", p:"P210: Alejar del calor.\nP280: Usar guantes/gafas.", pics:["GHS02","GHS07"]},
-    "Etanol": {c:"64-17-5", con:"96%", s:"PELIGRO", h:"H225: Líquido muy inflamable.", p:"P210: Alejar de llamas.\nP233: Recipiente cerrado.", pics:["GHS02"]},
-    "Cloro": {c:"7681-52-9", con:"", s:"PELIGRO", h:"H314: Quemaduras graves.\nH400: Muy tóxico acuático.", p:"P273: No liberar al ambiente.\nP280: Protección total.", pics:["GHS05","GHS09"]},
-    "Acido": {c:"7647-01-0", con:"37%", s:"PELIGRO", h:"H314: Quemaduras graves piel/ojos.", p:"P260: No respirar vapores.\nP280: Equipo protección.", pics:["GHS05","GHS07"]},
-    "Gasolina": {c:"86290-81-5", con:"", s:"PELIGRO", h:"H224: Extremadamente inflamable.\nH350: Cáncer.\nH304: Mortal ingestión.", p:"P210: No fumar.", pics:["GHS02","GHS08","GHS07"]}
+    "Acetona": {
+        n: "Acetona (C_3H_6O)", c:"67-64-1", con:"", s:"PELIGRO", 
+        h:"Líquido y vapores muy inflamables.\nProvoca irritación ocular grave.\nPuede provocar somnolencia o vértigo.", 
+        p:"Mantener alejado del calor/chispas/llamas.\nMantener el recipiente herméticamente cerrado.\nLlevar guantes/gafas.\nEN OJOS: Enjuagar cuidadosamente.", 
+        pics:["GHS02","GHS07"],
+        dim: {w:100, h:70}, manual: {on:true, t:22, c:12, b:8, cas:8, foot:7, pos:'bottom'}
+    },
+    "HCl": {
+        n: "Ácido Clorhídrico (HCl)", c:"7647-01-0", con:"0,5 mol/L", s:"PELIGRO", 
+        h:"Puede ser corrosivo para los metales.\nProvoca quemaduras graves.\nPuede irritar las vías respiratorias.", 
+        p:"No respirar la niebla.\nLlevar guantes/ropa de protección.\nEN PIEL: Quitar ropa. Enjuagar.\nEN OJOS: Aclarar cuidadosamente.", 
+        pics:["GHS05","GHS07"],
+        dim: {w:100, h:70}, manual: {on:true, t:20, c:12, b:8, cas:8, foot:7, pos:'bottom'}
+    },
+    "NaOH": {
+        n: "Hidróxido de Sodio (NaOH)", c:"1310-73-2", con:"1,0 mol/L", s:"PELIGRO", 
+        h:"Puede ser corrosivo para los metales.\nProvoca quemaduras graves en la piel y lesiones oculares graves.", 
+        p:"Llevar guantes/gafas/máscara.\nEN INGESTIÓN: Enjuagar boca. NO vomitar.\nLlamar a CENTRO TOXICOLOGÍA.", 
+        pics:["GHS05"],
+        dim: {w:100, h:70}, manual: {on:false}
+    },
+    "Etanol": {
+        n: "Etanol (C_2H_5OH)", c:"64-17-5", con:"96% v/v", s:"PELIGRO", 
+        h:"Líquido y vapores muy inflamables.\nProvoca irritación ocular grave.", 
+        p:"Alejar de calor y llamas.\nRecipiente hermético.\nEvitar descargas estáticas.", 
+        pics:["GHS02"],
+        dim: {w:100, h:60}, manual: {on:false}
+    },
+    "Cromato": {
+        n: "Dicromato de Potasio (K_2Cr_2O_7)", c:"7778-50-9", con:"Sólido Puro", s:"PELIGRO", 
+        h:"Comburente.\nCáncer.\nDefectos genéticos.\nQuemaduras graves.", 
+        p:"Pedir instrucciones.\nAlejar de ropa.\nEquipo protección.\nConsultar médico.", 
+        pics:["GHS03","GHS06","GHS08","GHS05","GHS09"],
+        dim: {w:110, h:80}, manual: {on:true, t:18, c:12, b:7, cas:8, foot:7, pos:'bottom'}
+    },
+    "Tolueno": {
+        n: "Tolueno (C_7H_8)", c:"108-88-3", con:"", s:"PELIGRO", 
+        h:"Muy inflamable.\nDaña al feto.\nMortal ingestión.\nDaños órganos.", 
+        p:"Alejar del calor.\nUsar guantes.\nSI SE INGIERE: Llamar centro toxicológico.", 
+        pics:["GHS02","GHS08","GHS07"],
+        dim: {w:100, h:70}, manual: {on:true, t:20, c:12, b:9, cas:8, foot:7, pos:'bottom'}, date: new Date().toISOString().split('T')[0]
+    }
 };
 const pPhrasesRaw = `P101 – Si se necesita consejo médico, tener a mano el envase o la etiqueta.\nP102 – Mantener fuera del alcance de los niños.\nP103 – Leer atentamente y seguir todas las instrucciones.\nP201 – Solicitar instrucciones especiales antes del uso.\nP202 – No manipular la sustancia antes de haber leído y comprendido todas las instrucciones de seguridad.\nP210 – Mantener alejado del calor, de superficies calientes, de chispas, de llamas abiertas y de cualquier otra fuente de ignición. No fumar.\nP211 – No pulverizar sobre una llama abierta u otra fuente de ignición.\nP212 – Evitar el calentamiento en condiciones de aislamiento o la reducción del agente insensibilizante.\nP220 – Mantener o almacenar alejado de la ropa /…/ materiales combustibles.\nP222 – No dejar que entre en contacto con el aire.\nP223 – Evitar el contacto con el agua.\nP230 – Mantener humedecido con…\nP231 – Manipular y almacenar el contenido en un medio de gas inerte/…\nP232 – Proteger de la humedad.\nP233 – Mantener el recipiente herméticamente cerrado.\nP234 – Conservar únicamente en el embalaje original.\nP235 – Mantener en lugar fresco.\nP240 – Toma de tierra y enlace equipotencial del recipiente y del equipo receptor.\nP241 – Utilizar material [eléctrico/de ventilación/ iluminación/ …] antideflagrante.\nP242 – Utilizar únicamente herramientas que no produzcan chispas.\nP243 – Tomar medidas de precaución contra descargas electrostáticas.\nP244 – Mantener las valvulas y los racores libres de aceite y grasa.\nP250 – Evitar abrasiones/choques/fricciones/… .\nP251 – No perforar ni quemar, incluso después de su uso.\nP260 – No respirar el polvo/el humo/el gas/la niebla/los vapores/el aerosol.\nP261 – Evitar respirar el polvo/el humo/el gas/la niebla/ los vapores/el aerosol.\nP262 – Evitar el contacto con los ojos, la piel o la ropa.\nP263 – Evitar todo contacto con la sustancia durante el embarazo y la lactancia.\nP264 – Lavarse … concienzudamente tras la manipulación.\nP270 – No comer, beber ni fumar durante su utilización.\nP271 – Utilizar únicamente en exteriores o en un lugar bien ventilado.\nP272 – Las prendas de trabajo contaminadas no podrán sacarse del lugar de trabajo.\nP273 – Evitar su liberación al medio ambiente.\nP280 – Llevar guantes/ropa de protección/equipo de protección para los ojos/la cara/los oídos/…\nP282 – Usar guantes aislantes contra el frío y equipo de protección para la cara o los ojos.\nP283 – Llevar ropa resistente al fuego o retardante de las llamas.\nP284 – [En caso de ventilación insuficiente,] llevar equipo de protección respiratoria.\nP231 + P232 – Manipular y almacenar el contenido en un medio de gas inerte/…. Proteger de la humedad\nP301 – EN CASO DE INGESTIÓN:\nP302 – EN CASO DE CONTACTO CON LA PIEL:\nP303 – EN CASO DE CONTACTO CON LA PIEL (o el pelo):\nP304 – EN CASO DE INHALACIÓN:\nP305 – EN CASO DE CONTACTO CON LOS OJOS:\nP306 – EN CASO DE CONTACTO CON LA ROPA:\nP308 – EN CASO DE exposición manifiesta o presunta:\nP310 – Llamar inmediatamente a un CENTRO DE TOXICOLOGĺA/médico/…\nP311 – Llamar a un CENTRO DE TOXICOLOGĺA/ médico/…\nP312 – Llamar a un CENTRO DE TOXICOLOGĺA/ médico/…/si la persona se encuentra mal.\nP313 – Consultar a un médico.\nP314 – Consultar a un médico en caso de malestar.\nP315 – Consultar a un médico inmediatamente.\nP320 – Se necesita urgentemente un tratamiento específico (ver … en esta etiqueta).\nP321 – Se necesita un tratamiento específico (ver … en esta etiqueta).\nP330 – Enjuagarse la boca.\nP331 – NO provocar el vómito.\nP332 – En caso de irritación cutánea:\nP333 – En caso de irritación o erupción cutánea:\nP334 – Sumergir en agua fría [o envolver en vendas húmedas].\nP335 – Sacudir las partículas que se hayan depositado en la piel.\nP336 – Descongelar las partes heladas con agua tibia. No frotar la zona afectada.\nP337 – Si persiste la irritación ocular:\nP338 – Quitar las lentes de contacto, si lleva y resulta fácil. Seguir aclarando.\nP340 – Transportar a la persona al aire libre y mantenerla en una posición que le facilite la respiración.\nP342 – En caso de síntomas respiratorios:\nP351 – Aclarar cuidadosamente con agua durante varios minutos.\nP352 – Lavar con abundante agua/…\nP353 – Enjuagar la piel con agua [o ducharse].\nP360 – Aclarar inmediatamente con agua abundante las prendas y la piel contaminadas antes de quitarse la ropa.\nP361 – Quitar inmediatamente todas las prendas contaminadas.\nP362 – Quitar las prendas contaminadas.\nP363 – Lavar las prendas contaminadas antes de volver a usarlas.\nP364 – Y lavarlas antes de volver a usarlas.\nP370 – En caso de incendio:\nP371 – En caso de incendio importante y en grandes cantidades:\nP372 – Riesgo de explosión.\nP373 – NO luchar contra el incendio cuando el fuego llega a los explosivos.\nP375 – Luchar contra el incendio a distancia, dado el riesgo de explosión.\nP376 – Detener la fuga, si no hay peligro en hacerlo.\nP377 – Fuga de gas en llamas: No apagar, salvo si la fuga puede detenerse sin peligro.\nP378 – Utilizar… para la extinción.\nP380 – Evacuar la zona.\nP381 – En caso de fuga, eliminar todas las fuentes de ignición.\nP390 – Absorber el vertido para que no dañe otros materiales.\nP391 – Recoger el vertido.\nP301 + P310 – EN CASO DE INGESTIÓN: Llamar inmediatamente a un CENTRO DE TOXICOLOGĺA/ médico/…\nP301 + P312 – EN CASO DE INGESTIÓN: Llamar a un CENTRO DE TOXICOLOGĺA/médico/…/si la persona se encuentra mal.\nP301 + P330 + P331 – EN CASO DE INGESTIÓN: Enjuagar la boca. NO provocar el vómito.\nP302 + P334 – EN CASO DE CONTACTO CON LA PIEL: Sumergir en agua fría o envolver en vendas húmedas.\nP302 + P352 – EN CASO DE CONTACTO CON LA PIEL: Lavar con abundante agua/…\nP303 + P361 + P353 – EN CASO DE CONTACTO CON LA PIEL (o el pelo): Quitar inmediatamente toda la ropa contaminada. Enjuagar la piel con agua [o ducharse].\nP304 + P340 – EN CASO DE INHALACIÓN: Transportar a la persona al aire libre y mantenerla en una posición que le facilite la respiración.\nP305 + P351 + P338 – EN CASO DE CONTACTO CON LOS OJOS: Enjuagar con agua cuidadosamente durante varios minutos. Quitar las lentes de contacto cuando estén presentes y pueda hacerse con facilidad. Proseguir con el lavado.\nP306 + P360 – EN CASO DE CONTACTO CON LA ROPA: Aclarar inmediatamente con agua abundante las prendas y la piel contaminadas antes de quitarse la ropa.\nP308 + P311 – EN CASO DE exposición manifiesta o presunta: Llamar a un CENTRO DE TOXICOLOGĺA/médico/…\nP308 + P313 – EN CASO DE exposición manifiesta o presunta: Consultar a un médico.\nP332 + P313 – En caso de irritación cutánea: Consultar a un médico.\nP333 + P313 – En caso de irritación o erupción cutánea: Consultar a un médico.\nP337 + P313 – Si persiste la irritación ocular: Consultar a un médico.\nP342 + P311 – En caso de síntomas respiratorios: Llamar a un CENTRO DE TOXICOLOGĺA/médico/…\nP361 + P364 – Quitar inmediatamente todas las prendas contaminadas y lavarlas antes de volver a usarlas.\nP361 + P364 – Quitar las prendas contaminadas y lavarlas antes de volver a usarlas.\nP370 + P376 – En caso de incendio: Detener la fuga, si no hay peligro en hacerlo.\nP370 + P378 – En caso de incendio: Utilizar… para la extinción.\nP370 + P380 + P375 – En caso de incendio: Evacuar la zona. Luchar contra el incendio a distancia, dado el riesgo de explosión.\nP371 + P380 + P375 – En caso de incendio importante y en grandes cantidades: Evacuar la zona. Luchar contra el incendio a distancia, dado el riesgo de explosión.\nP401 – Almacenar conforme a … .\nP402 – Almacenar en un lugar seco.\nP403 – Almacenar en un lugar bien ventilado.\nP404 – Almacenar en un recipiente cerrado.\nP405 – Guardar bajo llave.\nP406 – Almacenar en un recipiente resistente a la corrosión / … con revestimiento interior resistente.\nP407 – Dejar un espacio de aire entre las pilas o bandejas.\nP410 – Proteger de la luz del sol.\nP411 – Almacenar a temperaturas no superiores a … o C /… o F.\nP412 – No exponer a temperaturas superiores a 50 o C / 122 o F.\nP413 – Almacenar las cantidades a granel superiores a … kg /… lbs a temperaturas no superiores a … o C /… o F.\nP420 – Almacenar separadamente.\nP402 + P404 – Almacenar en un lugar seco. Almacenar en un recipiente cerrado.\nP403 + P233 – Almacenar en un lugar bien ventilado. Mantener el recipiente cerrado herméticamente.\nP403 + P235 – Almacenar en un lugar bien ventilado. Mantener en lugar fresco.\nP410 + P403 – Proteger de la luz del sol. Almacenar en un lugar bien ventilado.\nP410 + P412 – Proteger de la luz del sol. No exponer a temperaturas superiores a 50 o C / 122 o F.\nP501 – Eliminar el contenido/el recipiente en …\nP502 – Pedir información al fabricante o proveedor sobre la recuperación o el reciclado.\nP503 – Pedir información al fabricante/ proveedor/… sobre su eliminación/recuperación/reciclado`;
-const hPhrasesRaw = `H200\tExplosivo inestable.\nH201\tExplosivo; peligro de explosión en masa.\nH202\tExplosivo; grave peligro de proyección.\nH203\tExplosivo; peligro de incendio, de onda expansiva o de proyección.\nH204\tPeligro de incendio o de proyección.\nH205\tPeligro de explosión en masa en caso de incendio.\nH220\tGas extremadamente inflamable.\nH221\tGas inflamable.\nH222\tAerosol extremadamente inflamable.\nH223\tAerosol inflamable.\nH224\tLíquido y vapores extremadamente inflamables.\nH225\tLíquido y vapores muy inflamables.\nH226\tLíquidos y vapores inflamables.\nH228\tSólido inflamable.\nH240\tPeligro de explosión en caso de calentamiento.\nH241\tPeligro de incendio o explosión en caso de calentamiento.\nH242\tPeligro de incendio en caso de calentamiento.\nH250\tSe inflama espontáneamente en contacto con el aire.\nH251\tSe calienta espontáneamente; puede inflamarse.\nH252\tSe calienta espontáneamente en grandes cantidades; puede inflamarse.\nH260\tEn contacto con el agua desprende gases inflamables que pueden inflamarse espontáneamente.\nH261\tEn contacto con el agua desprende gases inflamables.\nH270\tPuede provocar o agravar un incendio; comburente.\nH271\tPuede provocar un incendio o una explosión; muy comburente.\nH272\tPuede agravar un incendio; comburente.\nH280\tContiene gas a presión; peligro de explosión en caso de calentamiento.\nH281\tContiene gas refrigerado; puede provocar quemaduras o lesiones criogénicas.\nH290\tPuede ser corrosivo para los metales.\nH300\tMortal en caso de ingestión.\nH301\tTóxico en caso de ingestión.\nH302\tNocivo en caso de ingestión.\nH304\tPuede ser mortal en caso de ingestión y de penetración en las vías respiratorias.\nH310\tMortal en contacto con la piel.\nH311\tTóxico en contacto con la piel.\nH312\tNocivo en contacto con la piel.\nH314\tProvoca quemaduras graves en la piel y lesiones oculares graves.\nH315\tProvoca irritación cutánea.\nH317\tPuede provocar una reacción alérgica en la piel.\nH318\tProvoca lesiones oculares graves.\nH319\tProvoca irritación ocular grave.\nH330\tMortal en caso de inhalación.\nH331\tTóxico en caso de inhalación.\nH332\tNocivo en caso de inhalación.\nH334\tPuede provocar síntomas de alergia o asma o dificultades respiratorias en caso de inhalación.\nH335\tPuede irritar las vías respiratorias.\nH336\tPuede provocar somnolencia o vértigo.\nH340\tPuede provocar defectos genéticos.\nH341\tSe sospecha que provoca defectos genéticos.\nH350\tPuede provocar cáncer.\nH351\tSe sospecha que provoca cáncer.\nH360\tPuede perjudicar la fertilidad o dañar al feto.\nH361\tSe sospecha que puede perjudicar la fertilidad o dañar el feto.\nH362\tPuede perjudicar a los niños alimentados con leche materna.\nH370\tProvoca daños en los órganos.\nH371\tPuede provocar daños en los órganos.\nH372\tProvoca daños en los órganos tras exposiciones prolongadas o repetidas.\nH373\tPuede provocar daños en los órganos tras exposiciones prolongadas o repetidas.\nH400\tMuy tóxico para los organismos acuáticos.\nH410\tMuy tóxico para los organismos acuáticos, con efectos nocivos duraderos.\nH411\tTóxico para los organismos acuáticos, con efectos nocivos duraderos.\nH412\tNocivo para los organismos acuáticos, con efectos nocivos duraderos.\nH413\tPuede ser nocivo para los organismos acuáticos, con efectos nocivos duraderos.\nEUH001\tExplosivo en estado seco.\nEUH014\tReacciona violentamente con el agua.\nEUH018\tAl usarlo, pueden formarse mezclas aire-vapor explosivas o inflamables.\nEUH019\tPuede formar peróxidos explosivos.\nEUH044\tRiesgo de explosión al calentarlo en ambiente confinado.\nEUH029\tEn contacto con agua libera gases tóxicos.\nEUH031\tEn contacto con ácidos libera gases tóxicos.\nEUH032\tEn contacto con ácidos libera gases muy tóxicos.\nEUH066\tLa exposición repetida puede provocar sequedad o formación de grietas en la piel.\nEUH070\tTóxico en contacto con los ojos.\nEUH071\tCorrosivo para las vías respiratorias.\nEUH201\tContiene plomo. No utilizar en objetos que los niños puedan masticar o chupar.\nEUH201A\t¡Atención! Contiene plomo.\nEUH202\tCianoacrilato. Peligro. Se adhiere a la piel y a los ojos en pocos segundos. Mantener fuera del alcance de los niños.\nEUH203\tContiene cromo (VI). Puede provocar una reacción alérgica.\nEUH204\tContiene isocianatos. Puede provocar una reacción alérgica.\nEUH205\tContiene componentes epoxídicos. Puede provocar una reacción alérgica.\nEUH206\t¡Atención! No utilizar junto con otros productos. Puede desprender gases peligrosos (cloro).\nEUH207\t¡Atención! Contiene cadmio. Durante su utilización se desprenden vapores peligrosos.\nEUH208\tContiene sensibilizantes. Puede provocar una reacción alérgica.\nEUH209\tPuede inflamarse fácilmente al usarlo.\nEUH209A\tPuede inflamarse al usarlo.\nEUH210\tPuede solicitarse la ficha de datos de seguridad.\nEUH401\tA fin de evitar riesgos para las personas y el medio ambiente, siga las instrucciones de uso.`;
+const hPhrasesRaw = `H200\tExplosivo inestable.\nH201\tExplosivo; peligro de explosión en masa.\nH202\tExplosivo; grave peligro de proyección.\nH203\tExplosivo; peligro de incendio, de onda expansiva o de proyección.\nH204\tPeligro de incendio o de proyección.\nH205\tPeligro de explosión en masa en caso de incendio.\nH220\tGas extremadamente inflamable.\nH221\tGas inflamable.\nH222\tAerosol extremadamente inflamable.\nH223\tAerosol inflamable.\nH224\tLíquido y vapores extremadamente inflamables.\nH225\tLíquido y vapores muy inflamables.\nH226\tLíquidos y vapores inflamables.\nH228\tSólido inflamable.\nH240\tPeligro de explosión en caso de calentamiento.\nH241\tPeligro de incendio o explosión en caso de calentamiento.\nH242\tPeligro de incendio en caso de calentamiento.\nH250\tSe inflama espontáneamente en contacto con el aire.\nH251\tSe calienta espontáneamente; puede inflamarse.\nH252\tSe calienta espontáneamente en grandes cantidades; puede inflamarse.\nH260\tEn contacto con el agua desprende gases inflamables que pueden inflamarse espontáneamente.\nH261\tEn contacto con el agua desprende gases inflamables.\nH270\tPuede provocar o agravar un incendio; comburente.\nH271\tPuede provocar un incendio o una explosión; muy comburente.\nH272\tPuede agravar un incendio; comburente.\nH280\tContiene gas a presión; peligro de explosión en caso de calentamiento.\nH281\tContiene gas refrigerado; puede provocar quemaduras o lesiones criogénicas.\nH290\tPuede ser corrosivo para los metales.\nH300\tMortal en caso de ingestión.\nH301\tTóxico en caso de ingestión.\nH302\tNocivo en caso de ingestión.\nH304\tPuede ser mortal en caso de ingestión y de penetración en las vías respiratorias.\nH310\tMortal en contacto con la piel.\nH311\tTóxico en contacto con la piel.\nH312\tNocivo en contacto con la piel.\nH314\tProvoca quemaduras graves en la piel y lesiones oculares graves.\nH315\tProvoca irritación cutánea.\nH317\tPuede provocar una reacción alérgica en la piel.\nH318\tProvoca lesiones oculares graves.\nH319\tProvoca irritación ocular grave.\nH330\tMortal en caso de inhalación.\nH331\tTóxico en caso de inhalación.\nH332\tNocivo en caso de inhalación.\nH334\tPuede provocar síntomas de alergia o asma o dificultades respiratorias en caso de inhalación.\nH335\tPuede irritar las vías respiratorias.\nH336\tPuede provocar somnolencia o vértigo.\nH340\tPuede provocar defectos genéticos.\nH341\tSe sospecha que provoca defectos genéticos.\nH350\tPuede provocar cáncer.\nH351\tSe sospecha que provoca cáncer.\nH360\tPuede perjudicar la fertilidad o dañar al feto.\nH361\tSe sospecha que puede perjudicar la fertilidad o dañar el feto.\nH362\tPuede perjudicar a los niños alimentados con leche materna.\nH370\tProvoca daños en los órganos.\nH371\tProvoca daños en los órganos.\nH372\tProvoca daños en los órganos tras exposiciones prolongadas o repetidas.\nH373\tPuede provocar daños en los órganos tras exposiciones prolongadas o repetidas.\nH400\tMuy tóxico para los organismos acuáticos.\nH410\tMuy tóxico para los organismos acuáticos, con efectos nocivos duraderos.\nH411\tTóxico para los organismos acuáticos, con efectos nocivos duraderos.\nH412\tNocivo para los organismos acuáticos, con efectos nocivos duraderos.\nH413\tPuede ser nocivo para los organismos acuáticos, con efectos nocivos duraderos.\nEUH001\tExplosivo en estado seco.\nEUH014\tReacciona violentamente con el agua.\nEUH018\tAl usarlo, pueden formarse mezclas aire-vapor explosivas o inflamables.\nEUH019\tPuede formar peróxidos explosivos.\nEUH044\tRiesgo de explosión al calentarlo en ambiente confinado.\nEUH029\tEn contacto con agua libera gases tóxicos.\nEUH031\tEn contacto con ácidos libera gases tóxicos.\nEUH032\tEn contacto con ácidos libera gases muy tóxicos.\nEUH066\tLa exposición repetida puede provocar sequedad o formación de grietas en la piel.\nEUH070\tTóxico en contacto con los ojos.\nEUH071\tCorrosivo para las vías respiratorias.\nEUH201\tContiene plomo. No utilizar en objetos que los niños puedan masticar o chupar.\nEUH201A\t¡Atención! Contiene plomo.\nEUH202\tCianoacrilato. Peligro. Se adhiere a la piel y a los ojos en pocos segundos. Mantener fuera del alcance de los niños.\nEUH203\tContiene cromo (VI). Puede provocar una reacción alérgica.\nEUH204\tContiene isocianatos. Puede provocar una reacción alérgica.\nEUH205\tContiene componentes epoxídicos. Puede provocar una reacción alérgica.\nEUH206\t¡Atención! No utilizar junto con otros productos. Puede desprender gases peligrosos (cloro).\nEUH207\t¡Atención! Contiene cadmio. Durante su utilización se desprenden vapores peligrosos.\nEUH208\tContiene sensibilizantes. Puede provocar una reacción alérgica.\nEUH209\tPuede inflamarse fácilmente al usarlo.\nEUH209A\tPuede inflamarse al usarlo.\nEUH210\tPuede solicitarse la ficha de datos de seguridad.\nEUH401\tA fin de evitar riesgos para las personas y el medio ambiente, siga las instrucciones de uso.`;
 function parsePhrases(raw) {
     let lines = raw.split('\n');
     let obj = {};
@@ -360,6 +438,10 @@ async function init() {
         grid.appendChild(div);
     });
     fill('Acetona');
+    document.getElementById('inp-width').value = 100;
+    document.getElementById('inp-height').value = 70;
+    document.getElementById('chk-manual').checked = false;
+    upd();
     updateStorageSelect();
     document.addEventListener('click', function(e){
         if(!e.target.closest('.group')){
@@ -380,12 +462,36 @@ function togglePic(k, el) {
 function fill(name) {
     const t = dataPresets[name];
     if(!t) return;
-    document.getElementById('inp-name').value = name; 
+    document.getElementById('inp-name').value = t.n; 
     document.getElementById('inp-conc').value = t.con || "";
     document.getElementById('inp-cas').value = t.c;
     document.getElementById('inp-signal').value = t.s;
     document.getElementById('inp-h').value = t.h;
     document.getElementById('inp-p').value = t.p;
+    
+    if(t.dim) {
+        document.getElementById('inp-width').value = t.dim.w;
+        document.getElementById('inp-height').value = t.dim.h;
+    }
+    
+    if(t.manual) {
+        document.getElementById('chk-manual').checked = t.manual.on;
+        if(t.manual.t) document.getElementById('rng-fs-title').value = t.manual.t;
+        if(t.manual.c) document.getElementById('rng-fs-conc').value = t.manual.c;
+        if(t.manual.b) document.getElementById('rng-fs-body').value = t.manual.b;
+        if(t.manual.cas) document.getElementById('rng-fs-cas').value = t.manual.cas;
+        if(t.manual.foot) document.getElementById('rng-fs-foot').value = t.manual.foot;
+        if(t.manual.pos) document.getElementById('sel-cas-pos').value = t.manual.pos;
+    } else {
+        document.getElementById('chk-manual').checked = false;
+    }
+
+    if(t.date) {
+        document.getElementById('inp-date').value = t.date;
+    } else {
+        document.getElementById('inp-date').value = "";
+    }
+
     activePics.clear();
     document.querySelectorAll('.picto-opt').forEach(el => {
         el.classList.remove('sel');
@@ -412,7 +518,7 @@ function searchPhrase(q, type){
         div.onclick = () => {
             let txtArea = document.getElementById(type === 'h' ? 'inp-h' : 'inp-p');
             let val = txtArea.value;
-            txtArea.value = val + (val.length > 0 ? "\n" : "") + key + ": " + list[key];
+            txtArea.value = val + (val.length > 0 ? "\n" : "") + list[key];
             container.style.display = 'none';
             upd();
         };
@@ -424,10 +530,38 @@ function format(txt) {
     return txt.replace(/\n/g, '<br>').replace(/_(\d+)/g, '<sub>$1</sub>');
 }
 function calcPictoSize(count) {
-    if (count <= 4) return "44%";
+    if (count <= 4) return "42%";
     if (count <= 6) return "30%"; 
-    if (count <= 9) return "30%"; 
-    return "23%"; 
+    if (count <= 9) return "28%"; 
+    return "20%"; 
+}
+function fitText(id, manualSize) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.style.fontSize = manualSize + 'pt';
+    if(document.getElementById('chk-manual').checked) return;
+    
+    let size = manualSize;
+    while(size > 6 && (el.scrollWidth > el.offsetWidth || el.scrollHeight > el.offsetHeight + 5)) {
+        size -= 0.5;
+        el.style.fontSize = size + 'pt';
+    }
+}
+function fitBodyText(manualSize) {
+    const el = document.getElementById('l-text-body');
+    const container = el.parentElement; 
+    if(!el) return;
+    
+    el.style.fontSize = manualSize + 'pt';
+    if(document.getElementById('chk-manual').checked) return;
+
+    let size = manualSize;
+    let minSize = 4.5; 
+    
+    while(size > minSize && el.scrollHeight > el.offsetHeight) {
+        size -= 0.5;
+        el.style.fontSize = size + 'pt';
+    }
 }
 function upd() {
     clearTimeout(debounceTimer);
@@ -437,34 +571,67 @@ function upd() {
         const scale = document.getElementById('inp-scale').value;
         const isManual = document.getElementById('chk-manual').checked;
         const root = document.querySelector(':root');
+        
         root.style.setProperty('--w', w + 'mm');
         root.style.setProperty('--h', h + 'mm');
         root.style.setProperty('--scale', scale);
+        
         const manualDiv = document.getElementById('manual-opts');
+        let tSize = 22, cSize = 12, bSize = 9, casSize = 8, fSize = 7;
+        
         if(isManual) {
             manualDiv.classList.add('manual-show');
-            root.style.setProperty('--fs-title', document.getElementById('rng-fs-title').value + 'pt');
-            root.style.setProperty('--fs-conc', document.getElementById('rng-fs-conc').value + 'pt');
-            root.style.setProperty('--fs-body', document.getElementById('rng-fs-body').value + 'pt');
+            tSize = parseFloat(document.getElementById('rng-fs-title').value);
+            cSize = parseFloat(document.getElementById('rng-fs-conc').value);
+            bSize = parseFloat(document.getElementById('rng-fs-body').value);
+            casSize = parseFloat(document.getElementById('rng-fs-cas').value);
+            fSize = parseFloat(document.getElementById('rng-fs-foot').value);
         } else {
             manualDiv.classList.remove('manual-show');
-            root.style.setProperty('--fs-title', '24pt');
-            root.style.setProperty('--fs-conc', '14pt');
-            root.style.setProperty('--fs-body', '10pt');
         }
+
+        root.style.setProperty('--fs-title', tSize + 'pt');
+        root.style.setProperty('--fs-conc', cSize + 'pt');
+        root.style.setProperty('--fs-body', bSize + 'pt');
+        root.style.setProperty('--fs-cas', casSize + 'pt');
+        root.style.setProperty('--fs-foot', fSize + 'pt');
+
         document.getElementById('out-name').innerHTML = format(document.getElementById('inp-name').value);
+        
         const concVal = document.getElementById('inp-conc').value;
         const outConc = document.getElementById('out-conc');
         if(concVal.trim().length > 0) {
             outConc.innerHTML = format(concVal);
             outConc.style.display = 'block';
         } else { outConc.style.display = 'none'; }
+
         const casVal = document.getElementById('inp-cas').value;
-        const outCas = document.getElementById('out-cas');
+        const casPos = document.getElementById('sel-cas-pos').value;
+        const outCasTop = document.getElementById('out-cas-top');
+        const outCasBot = document.getElementById('out-cas-bottom');
+        
+        outCasTop.style.display = 'none';
+        outCasBot.innerText = "";
+        
+        const titleEl = document.getElementById('out-name');
+        
         if(casVal.trim().length > 0) {
-            outCas.innerText = "CAS: " + casVal;
-            outCas.style.display = 'block';
-        } else { outCas.style.display = 'none'; }
+            const casTxt = "CAS: " + casVal;
+            if(casPos === 'top') {
+                outCasTop.innerText = casTxt;
+                outCasTop.style.display = 'block';
+                titleEl.style.paddingLeft = "18mm";
+                titleEl.style.paddingRight = "18mm";
+            } else {
+                outCasBot.innerText = casTxt;
+                titleEl.style.paddingLeft = "1mm";
+                titleEl.style.paddingRight = "1mm";
+            }
+        } else {
+             titleEl.style.paddingLeft = "1mm";
+             titleEl.style.paddingRight = "1mm";
+        }
+
         const sig = document.getElementById('inp-signal').value;
         const sigEl = document.getElementById('out-sig');
         if(!sig) {
@@ -474,8 +641,10 @@ function upd() {
             sigEl.innerText = sig;
             sigEl.style.color = sig === 'PELIGRO' ? '#d32f2f' : '#f57c00';
         }
+
         document.getElementById('out-h').innerHTML = format(document.getElementById('inp-h').value);
         document.getElementById('out-p').innerHTML = format(document.getElementById('inp-p').value);
+
         const supVal = document.getElementById('inp-sup').value;
         const dateVal = document.getElementById('inp-date').value;
         let dateStr = "";
@@ -485,10 +654,8 @@ function upd() {
         }
         const outSup = document.getElementById('out-sup');
         const finalFoot = [supVal, dateStr].filter(Boolean).join(" - ");
-        if(finalFoot.trim().length > 0) {
-            outSup.innerText = finalFoot;
-            outSup.style.display = 'block';
-        } else { outSup.style.display = 'none'; }
+        outSup.innerText = finalFoot;
+
         const container = document.getElementById('out-imgs');
         container.innerHTML = "";
         const picsArr = Array.from(activePics).sort();
@@ -501,7 +668,13 @@ function upd() {
             d.innerHTML = `<img src="${ghsUrls[k]}" data-ghs="${k}">`;
             container.appendChild(d);
         });
-    }, 10);
+
+        if(!isManual) {
+            fitText('out-name', tSize);
+            fitBodyText(bSize);
+        }
+
+    }, 20);
 }
 function getFormData() {
     return {
@@ -517,9 +690,12 @@ function getFormData() {
         dim: { w: document.getElementById('inp-width').value, h: document.getElementById('inp-height').value },
         manual: {
             on: document.getElementById('chk-manual').checked,
+            pos: document.getElementById('sel-cas-pos').value,
             t: document.getElementById('rng-fs-title').value,
             c: document.getElementById('rng-fs-conc').value,
-            b: document.getElementById('rng-fs-body').value
+            b: document.getElementById('rng-fs-body').value,
+            cas: document.getElementById('rng-fs-cas').value,
+            foot: document.getElementById('rng-fs-foot').value
         }
     };
 }
@@ -576,9 +752,12 @@ function loadLabel(){
         }
         if(d.manual) {
             document.getElementById('chk-manual').checked = d.manual.on;
+            document.getElementById('sel-cas-pos').value = d.manual.pos || "bottom";
             document.getElementById('rng-fs-title').value = d.manual.t;
             document.getElementById('rng-fs-conc').value = d.manual.c;
             document.getElementById('rng-fs-body').value = d.manual.b;
+            if(d.manual.cas) document.getElementById('rng-fs-cas').value = d.manual.cas;
+            if(d.manual.foot) document.getElementById('rng-fs-foot').value = d.manual.foot;
         } else { document.getElementById('chk-manual').checked = false; }
         activePics.clear();
         if(d.pics) d.pics.forEach(p => activePics.add(p));
@@ -608,6 +787,40 @@ function updateStorageSelect(){
         opt.innerText = k;
         sel.appendChild(opt);
     });
+}
+function exportData() {
+    const saved = localStorage.getItem('sga_labels');
+    if(!saved || saved === '{}') { alert("No hay etiquetas guardadas para exportar."); return; }
+    const blob = new Blob([saved], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "sga_backup_" + new Date().toISOString().slice(0,10) + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+function importData(input) {
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const json = JSON.parse(e.target.result);
+            const saved = JSON.parse(localStorage.getItem('sga_labels') || '{}');
+            let count = 0;
+            for(let k in json) {
+                saved[k] = json[k];
+                count++;
+            }
+            localStorage.setItem('sga_labels', JSON.stringify(saved));
+            updateStorageSelect();
+            alert("Se importaron " + count + " etiquetas correctamente.");
+        } catch(err) {
+            alert("Error al leer el archivo. Asegúrate de que es un respaldo válido.");
+        }
+    };
+    reader.readAsText(file);
+    input.value = '';
 }
 function downloadImage(format) {
     const node = document.getElementById('lbl');
